@@ -1,0 +1,36 @@
+body {
+    background-color: rgb(229, 229, 229)
+}
+
+.party-list {
+    margin: 4px;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}
+
+.app-title {
+    margin: 1.5rem;
+}
+
+.hori-scroll {
+    margin: 4px;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.hori-scroll button {
+    margin: 4px;
+}
+
+.playground {
+    padding: 8px;
+}
+
+.loading {
+    margin-top: 1rem;
+}
+
+.guessnum-home-screen {
+    height: 90vh;
+}
