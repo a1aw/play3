@@ -1,6 +1,7 @@
 import React from 'react';
 import SetupLocalPlayersModal from './SetupLocalPlayersModal';
 import PassToPlayerModal from './PassToPlayerModal';
+import SelectKeypadKeyboardModal from './SelectKeypadKeyboardModal';
 import { Spinner } from 'react-bootstrap';
 
 export default class Playground extends React.Component {
@@ -9,10 +10,11 @@ export default class Playground extends React.Component {
         super(props);
         this.players = false;
         this.turns = 0;
-        this.state = { loading: true, loadingMsg: "Loading playground" };
+        this.state = { loading: true, loadingMsg: "Loading playground", keypad: true };
     }
 
     componentDidMount() {
+        //this.setState({ selectKeypadKeyboard: true });
         if (this.props.localMode) {
             this.setupLocalPlayers(this.getMinimumPlayers(), this.getMaximumPlayers());
         } else {
@@ -112,6 +114,9 @@ export default class Playground extends React.Component {
                     </div>
                 }
                 {this.isSetupComplete() && this.renderPlayground()}
+                {this.state.selectKeypadKeyboard &&
+                    <SelectKeypadKeyboardModal show={true} />
+                }
                 {this.state.setupLocalPlayers &&
                     <SetupLocalPlayersModal min={this.state.minPlayers} max={this.state.maxPlayers} show={this.state.setupLocalPlayers} onComplete={
                     (map) => {

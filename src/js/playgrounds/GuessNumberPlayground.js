@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, InputGroup, FormControl } from 'react-bootstrap';
 import Playground from '../components/Playground.js';
+import NumericKeypad from '../components/NumericKeypad';
 import '../../css/guessnum.css';
 
 const DEFAULT_MAXIMUM = 100;
@@ -11,6 +12,7 @@ export default class GuessNumberPlayground extends Playground {
         super(props);
         this.maximum = DEFAULT_MAXIMUM;
         this.randCount = 0;
+        this.guess = this.guess.bind(this);
     }
 
     getMinimumPlayers() {
@@ -32,7 +34,8 @@ export default class GuessNumberPlayground extends Playground {
             text: 0,
             number: 0,
             numberMin: 1,
-            numberMax: this.maximum
+            numberMax: this.maximum,
+            enabledKeys: []
         });
         this.random();
     }
@@ -67,8 +70,74 @@ export default class GuessNumberPlayground extends Playground {
     }
 
     nextTurn() {
-        document.getElementById("guess-number-field").disabled = false;
-        document.getElementById("guess-number-field").focus();
+        if (!this.state.keypad) {
+            document.getElementById("guess-number-field").disabled = false;
+            document.getElementById("guess-number-field").focus();
+        }
+        this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
+        this.updateKeypad();
+    }
+
+    updateKeypad() {
+        return;
+        /*
+        var val = document.getElementById("guess-number-field").value;
+        var parsedVal = parseInt(val);
+        if (isNaN(parsedVal)) {
+            this.setState({ enabledKeys: [] });
+            return;
+        }
+
+        var keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+        var out = [];
+        var num;
+        var i;
+        var j;
+        var minLog = Math.floor(Math.log10(this.state.numberMin));
+        var maxLog = Math.floor(Math.log10(this.state.numberMax));
+        for (i = 0; i < keys.length; i++) {
+            if (this.isKeyAvailable(parsedVal, keys[i], val.length)) {
+                out.push(keys[i]);
+            }
+        }
+        this.setState({ enabledKeys: out });
+        */
+    }
+
+    isKeyAvailable(val, key, len = 0) {
+        if (key === 0 && len === 0) {
+            return false;
+        }
+        var minLog = Math.floor(Math.log10(this.state.numberMin));
+        var maxLog = Math.floor(Math.log10(this.state.numberMax));
+        console.log("key: " + key + " len: " + len);
+        console.log("minLog: " + minLog + " maxLog: " + maxLog);
+        console.log("numMin/pow: " + Math.floor(this.state.numberMin / Math.pow(10, len)));
+        console.log("powMinloglen: " + Math.pow(key, minLog - len));
+        console.log("numMax/pow: " + Math.floor(this.state.numberMax / Math.pow(10, len)));
+        console.log("powMaxloglen: " + Math.pow(key, maxLog - len));
+        if (Math.floor(this.state.numberMin / Math.pow(10, len)) < Math.pow(key, minLog - len)) {
+            console.log("Minlog success");
+            if (minLog - len > 0) {
+                console.log("Not len 0")
+                return this.isKeyAvailable(key, len + 1);
+            } else {
+                console.log("Done true")
+                return true;
+            }
+        } else if (Math.floor(this.state.numberMax / Math.pow(10, len)) > Math.pow(key, maxLog - len)) {
+            console.log("Maxlog success");
+            if (maxLog - len > 0) {
+                console.log("Not len 0")
+                return this.isKeyAvailable(key, len + 1);
+            } else {
+                console.log("Done true")
+                return true;
+            }
+        } else {
+            console.log("Not correct")
+            return false;
+        }
     }
 
     startGame() {
@@ -114,22 +183,27 @@ export default class GuessNumberPlayground extends Playground {
     }
 
     guess() {
+        this.setState({ enabledKeys: [] });
         var guessStr = document.getElementById("guess-number-field").value;
         if (guessStr === "") {
+            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
             this.setState({ error: "It cannot be blank." })
             return;
         }
         var guess = parseInt(guessStr);
         if (isNaN(guess)) {
+            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
             this.setState({ error: "It must be an integer." })
             return;
         }
 
         if (guess >= this.state.numberMax) {
             this.setState({ error: "It cannot be larger than the maximum value." })
+            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
             return;
         } else if (guess <= this.state.numberMin) {
             this.setState({ error: "It cannot be less than the minimum value." })
+            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
             return;
         }
 
@@ -144,11 +218,15 @@ export default class GuessNumberPlayground extends Playground {
         if (this.state.text === "?") {
             this.setState({ text: guess });
             document.getElementById("guess-number-field").value = "";
-            document.getElementById("guess-number-field").focus();
+            if (!this.state.keypad) {
+                document.getElementById("guess-number-field").focus();
+            }
             this.readyNextTurn();
             return;
         } else {
-            document.getElementById("guess-number-field").disabled = true;
+            if (!this.state.keypad) {
+                document.getElementById("guess-number-field").disabled = true;
+            }
             this.countUpDownTo(guess);
         }
 
@@ -224,6 +302,22 @@ export default class GuessNumberPlayground extends Playground {
                         </div>
                     </div>
                 }
+                <NumericKeypad show={this.state.gameScreen} enabled={this.state.enabledKeys} doneEnabled={true} backspaceEnabled={true} onNumberClick={(evt) => {
+                    evt.preventDefault();
+                    console.log("Click num");
+                    var val = evt.target.innerHTML;
+                    document.getElementById("guess-number-field").value = document.getElementById("guess-number-field").value + val;
+                    this.updateKeypad();
+                }} onDoneClick={(evt) => {
+                    evt.preventDefault();
+                    console.log("Click done");
+                    this.guess();
+                }} onBackspaceClick={(evt) => {
+                    evt.preventDefault();
+                    console.log("Click bs");
+                    document.getElementById("guess-number-field").value = document.getElementById("guess-number-field").value.slice(0, -1);
+                    this.updateKeypad();
+                }} />
             </div>
         );
 	}
