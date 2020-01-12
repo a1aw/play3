@@ -1,0 +1,7 @@
+.guessnum-home-screen {
+    height: 90vh;
+}
+
+body.guessnum-correct {
+    background-color: rgb(166, 255, 168)
+}
