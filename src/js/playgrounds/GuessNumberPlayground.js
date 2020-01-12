@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, InputGroup, FormControl } from 'react-bootstrap';
 import Playground from '../components/Playground.js';
+import '../../css/guessnum.css';
 
 const DEFAULT_MAXIMUM = 100;
 
@@ -37,11 +38,13 @@ export default class GuessNumberPlayground extends Playground {
     }
 
     disable() {
+        clearInterval(this.interval);
+        document.getElementsByTagName("body")[0].classList.remove("guessnum-correct");
         clearTimeout(this.timeout);
     }
 
     random() {
-        var rand = Math.floor(Math.random() * this.maximum) + 1;
+        var rand = Math.floor(Math.random() * this.maximum);
         this.setState({ text: rand });
         this.randCount++;
         if (this.randCount < 50) {
@@ -56,7 +59,7 @@ export default class GuessNumberPlayground extends Playground {
                 }.bind(this), Math.floor(Math.random() * 5000));
             } else {
                 this.randCount = 0;
-                rand = Math.floor(Math.random() * this.maximum) + 1;
+                rand = Math.floor(Math.random() * this.maximum);
                 this.setState({ text: "?", number: rand });
                 this.readyNextTurn();
             }
@@ -70,11 +73,14 @@ export default class GuessNumberPlayground extends Playground {
 
     startGame() {
         clearTimeout(this.timeout);
-        this.setState({ homeScreen: false, gameScreen: true });
         this.setState({
+            homeScreen: false,
+            gameScreen: true,
+            playerName: false,
             numberMin: 1,
             numberMax: this.maximum
         });
+        this.resetTurns();
         this.random();
     };
 
@@ -85,14 +91,22 @@ export default class GuessNumberPlayground extends Playground {
             this.setState({ text: from + 1 });
             this.timeout = setTimeout(function () {
                 this.countUpDownTo(to);
-            }.bind(this), 50);
+            }.bind(this), 750 / (to - from));
         } else if (to < from) {
             this.setState({ text: from - 1 });
             this.timeout = setTimeout(function () {
                 this.countUpDownTo(to);
-            }.bind(this), 50);
+            }.bind(this), 750 / (from - to));
         } else if (to === this.state.number) {
             this.setState({ gameScreen: false, resultScreen: true });
+            this.interval = setInterval(function () {
+                var cl = document.getElementsByTagName("body")[0].classList;
+                if (cl.contains("guessnum-correct")) {
+                    cl.remove("guessnum-correct");
+                } else {
+                    cl.add("guessnum-correct");
+                }
+            }, 1000);
             return;
         } else {
             this.readyNextTurn();
@@ -148,7 +162,7 @@ export default class GuessNumberPlayground extends Playground {
                     this.state.homeScreen &&
                     <div className="d-flex flex-column align-items-center justify-content-center guessnum-home-screen">
                         <p className="display-2">{this.state.text}</p>
-                        <p className="display-3">Guess The Number</p>
+                        <p className="display-4">Guess The Number</p>
                         <br />
                         <div className="d-flex">
                             <Button variant="success" onClick={() => {
@@ -199,6 +213,8 @@ export default class GuessNumberPlayground extends Playground {
                         <br />
                         <div className="d-flex">
                             <Button variant="success" onClick={() => {
+                                clearInterval(this.interval);
+                                document.getElementsByTagName("body")[0].classList.remove("guessnum-correct");
                                 this.ready();
                             }}>Ready</Button>
                             <Button variant="secondary" className="ml-3">Instructions</Button>

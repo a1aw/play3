@@ -8,7 +8,7 @@ export default function (props) {
                 <Modal.Title>Pass to {props.playerName}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>It is <b>{props.playerName}</b> turn! Pass the device and let {props.playerName} to press the "Continue" button.</p>
+                <p>It is <b>{props.playerName}</b>'s turn! Pass the device and let {props.playerName} to press the "Continue" button.</p>
                 <Button variant="success" block onClick={props.onContinue}>Continue</Button>
             </Modal.Body>
             <Modal.Footer>

@@ -9,10 +9,6 @@ body {
     right: 4px;
 }
 
-.app-title {
-    margin: 1.5rem;
-}
-
 .hori-scroll {
     margin: 4px;
     overflow: auto;
@@ -29,8 +25,4 @@ body {
 
 .loading {
     margin-top: 1rem;
-}
-
-.guessnum-home-screen {
-    height: 90vh;
 }

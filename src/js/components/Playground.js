@@ -41,6 +41,10 @@ export default class Playground extends React.Component {
 
     }
 
+    resetTurns() {
+        this.turns = 0;
+    }
+
     ready() {
         if (this.props.localMode) {
             this.startGame();
