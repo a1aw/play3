@@ -9,7 +9,7 @@ const DEFAULT_MAXIMUM = 100;
 export default class GuessNumberPlayground extends Playground {
 
 	constructor(props){
-        super(props);
+        super(props, "guessnum");
         this.maximum = DEFAULT_MAXIMUM;
         this.randCount = 0;
         this.guess = this.guess.bind(this);
@@ -24,20 +24,21 @@ export default class GuessNumberPlayground extends Playground {
     }
 
     enable() {
-        if (this.players.length > 2) {
-            this.maximum = DEFAULT_MAXIMUM * this.players.length;
-        }
         this.setState({
             loading: false,
-            homeScreen: true,
+            homeScreen: false,
             gameScreen: false,
+            keypadDisplay: false,
+            funcKeyEnable: false,
+            keypad: true,
             text: 0,
-            number: 0,
             numberMin: 1,
             numberMax: this.maximum,
-            enabledKeys: []
+            enabledKeys: [],
+            numberMin: -1,
+            numberMax: -1
         });
-        this.random();
+        this.bootDone();
     }
 
     disable() {
@@ -46,97 +47,34 @@ export default class GuessNumberPlayground extends Playground {
         clearTimeout(this.timeout);
     }
 
-    random() {
-        var rand = Math.floor(Math.random() * this.maximum);
-        this.setState({ text: rand });
-        this.randCount++;
-        if (this.randCount < 50) {
-            this.timeout = setTimeout(function () {
-                this.random();
-            }.bind(this), 25);
-        } else {
-            if (this.state.homeScreen) {
-                this.randCount = 0;
-                this.timeout = setTimeout(function () {
-                    this.random();
-                }.bind(this), Math.floor(Math.random() * 5000));
+    onResponse(resp) {
+        console.log("RESPONSE");
+        console.log(resp);
+        if (resp.event === "numberMinMax") {
+            this.setState({
+                numberMin: resp.min,
+                numberMax: resp.max
+            });
+        } else if (resp.event === "newGuess") {
+            if (this.state.text === "?") {
+                this.setState({
+                    text: 0
+                });
+            }
+
+            var state = {
+                numberMin: resp.min,
+                numberMax: resp.max,
+                lastGuess: resp.number,
+                success: resp.success
+            };
+
+            if (this.state.countDone) {
+                this.setState(state);
+                this.countUpDownTo(resp.number);
             } else {
-                this.randCount = 0;
-                rand = Math.floor(Math.random() * this.maximum);
-                this.setState({ text: "?", number: rand });
-                this.readyNextTurn();
+                this.awaitNumbers.push(state);
             }
-        }
-    }
-
-    nextTurn() {
-        if (!this.state.keypad) {
-            document.getElementById("guess-number-field").disabled = false;
-            document.getElementById("guess-number-field").focus();
-        }
-        this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
-        this.updateKeypad();
-    }
-
-    updateKeypad() {
-        return;
-        /*
-        var val = document.getElementById("guess-number-field").value;
-        var parsedVal = parseInt(val);
-        if (isNaN(parsedVal)) {
-            this.setState({ enabledKeys: [] });
-            return;
-        }
-
-        var keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-        var out = [];
-        var num;
-        var i;
-        var j;
-        var minLog = Math.floor(Math.log10(this.state.numberMin));
-        var maxLog = Math.floor(Math.log10(this.state.numberMax));
-        for (i = 0; i < keys.length; i++) {
-            if (this.isKeyAvailable(parsedVal, keys[i], val.length)) {
-                out.push(keys[i]);
-            }
-        }
-        this.setState({ enabledKeys: out });
-        */
-    }
-
-    isKeyAvailable(val, key, len = 0) {
-        if (key === 0 && len === 0) {
-            return false;
-        }
-        var minLog = Math.floor(Math.log10(this.state.numberMin));
-        var maxLog = Math.floor(Math.log10(this.state.numberMax));
-        console.log("key: " + key + " len: " + len);
-        console.log("minLog: " + minLog + " maxLog: " + maxLog);
-        console.log("numMin/pow: " + Math.floor(this.state.numberMin / Math.pow(10, len)));
-        console.log("powMinloglen: " + Math.pow(key, minLog - len));
-        console.log("numMax/pow: " + Math.floor(this.state.numberMax / Math.pow(10, len)));
-        console.log("powMaxloglen: " + Math.pow(key, maxLog - len));
-        if (Math.floor(this.state.numberMin / Math.pow(10, len)) < Math.pow(key, minLog - len)) {
-            console.log("Minlog success");
-            if (minLog - len > 0) {
-                console.log("Not len 0")
-                return this.isKeyAvailable(key, len + 1);
-            } else {
-                console.log("Done true")
-                return true;
-            }
-        } else if (Math.floor(this.state.numberMax / Math.pow(10, len)) > Math.pow(key, maxLog - len)) {
-            console.log("Maxlog success");
-            if (maxLog - len > 0) {
-                console.log("Not len 0")
-                return this.isKeyAvailable(key, len + 1);
-            } else {
-                console.log("Done true")
-                return true;
-            }
-        } else {
-            console.log("Not correct")
-            return false;
         }
     }
 
@@ -145,15 +83,32 @@ export default class GuessNumberPlayground extends Playground {
         this.setState({
             homeScreen: false,
             gameScreen: true,
-            playerName: false,
-            numberMin: 1,
-            numberMax: this.maximum
+            countDone: false
         });
-        this.resetTurns();
-        this.random();
+        this.awaitNumbers = [];
+        this.disableInput();
+        this.fakeRandom();
     };
 
+    fakeRandom() {
+        var rand = Math.floor(Math.random() * this.maximum);
+        this.setState({ text: rand });
+        this.randCount++;
+        if (this.randCount < 50 || this.state.numberMin === -1 || this.state.numberMax === -1) {
+            this.timeout = setTimeout(function () {
+                this.fakeRandom();
+            }.bind(this), 25);
+        } else {
+            this.randCount = 0;
+            this.setState({ text: "?", countDone: true });
+            if (this.isMyTurn()) {
+                this.enableInput();
+            }
+        }
+    }
+
     countUpDownTo(to) {
+        this.setState({ countDone: false });
         var from = this.state.text;
         var i;
         if (to > from) {
@@ -166,7 +121,7 @@ export default class GuessNumberPlayground extends Playground {
             this.timeout = setTimeout(function () {
                 this.countUpDownTo(to);
             }.bind(this), 750 / (from - to));
-        } else if (to === this.state.number) {
+        } else if (this.state.success) {
             this.setState({ gameScreen: false, resultScreen: true });
             this.interval = setInterval(function () {
                 var cl = document.getElementsByTagName("body")[0].classList;
@@ -176,59 +131,76 @@ export default class GuessNumberPlayground extends Playground {
                     cl.add("guessnum-correct");
                 }
             }, 1000);
+            this.timeout = setTimeout(() => {
+                this.endGame();
+            }, 10000);
             return;
+        } else if (this.awaitNumbers.length > 0) {
+            var state = this.awaitNumbers.shift();
+            this.setState(state);
+            this.countUpDownTo(state.lastGuess);
         } else {
-            this.readyNextTurn();
+            this.setState({ countDone: true });
+            if (this.isMyTurn()) {
+                this.enableInput();
+            }
+        }
+    }
+
+    enableInput() {
+        if (!this.state.keypad) {
+            document.getElementById("guess-number-field").disabled = false;
+            document.getElementById("guess-number-field").focus();
+        }
+        document.getElementById("guess-btn").disabled = false;
+        this.setState({ keypadDisplay: this.state.keypad, funcKeyEnable: true, enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
+        //this.updateKeypad();
+    }
+
+    disableInput() {
+        document.getElementById("guess-number-field").disabled = true;
+        document.getElementById("guess-btn").disabled = true;
+        this.setState({ keypadDisplay: false, funcKeyEnable: false, enabledKeys: [] });
+    }
+
+    myTurn() {
+        if (this.state.countDone) {
+            this.enableInput();
         }
     }
 
     guess() {
-        this.setState({ enabledKeys: [] });
+        this.disableInput();
         var guessStr = document.getElementById("guess-number-field").value;
         if (guessStr === "") {
-            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
-            this.setState({ error: "It cannot be blank." })
+            this.enableInput();
+            this.setState({ error: "It cannot be blank." });
+            document.getElementById("guess-btn").disabled = false;
             return;
         }
         var guess = parseInt(guessStr);
         if (isNaN(guess)) {
-            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
+            this.enableInput();
             this.setState({ error: "It must be an integer." })
             return;
         }
 
         if (guess >= this.state.numberMax) {
-            this.setState({ error: "It cannot be larger than the maximum value." })
-            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
+            this.enableInput();
+            this.setState({ error: "It cannot be larger than the maximum value." });
             return;
         } else if (guess <= this.state.numberMin) {
-            this.setState({ error: "It cannot be less than the minimum value." })
-            this.setState({ enabledKeys: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] });
+            this.enableInput();
+            this.setState({ error: "It cannot be less than the minimum value." });
             return;
         }
 
         this.setState({ error: "" });
 
-        if (guess > this.state.number) {
-            this.setState({ numberMax: guess });
-        } else {
-            this.setState({ numberMin: guess });
-        }
-
-        if (this.state.text === "?") {
-            this.setState({ text: guess });
-            document.getElementById("guess-number-field").value = "";
-            if (!this.state.keypad) {
-                document.getElementById("guess-number-field").focus();
-            }
-            this.readyNextTurn();
-            return;
-        } else {
-            if (!this.state.keypad) {
-                document.getElementById("guess-number-field").disabled = true;
-            }
-            this.countUpDownTo(guess);
-        }
+        this.request({
+            event: "guess",
+            number: guess
+        });
 
         document.getElementById("guess-number-field").value = "";
     }
@@ -236,23 +208,6 @@ export default class GuessNumberPlayground extends Playground {
     renderPlayground() {
         return (
             <div>
-                {
-                    this.state.homeScreen &&
-                    <div className="d-flex flex-column align-items-center justify-content-center guessnum-home-screen">
-                        <p className="display-2">{this.state.text}</p>
-                        <p className="display-4">Guess The Number</p>
-                        <br />
-                        <div className="d-flex">
-                            <Button variant="success" onClick={() => {
-                                this.ready();
-                            }}>Ready</Button>
-                            <Button variant="secondary" className="ml-3">Instructions</Button>
-                            <Button variant="danger" className="ml-3" onClick={() => {
-                                this.leave();
-                            }}>Leave</Button>
-                        </div>
-                    </div>
-                }
                 {
                     this.state.gameScreen &&
                     <div className="d-flex flex-column align-items-center justify-content-center guessnum-home-screen">
@@ -273,7 +228,7 @@ export default class GuessNumberPlayground extends Playground {
                                 disabled
                             />
                             <InputGroup.Append>
-                                <Button variant="success" onClick={this.guess}>Guess</Button>
+                                <Button variant="success" id="guess-btn" onClick={this.guess}>Guess</Button>
                             </InputGroup.Append>
                         </InputGroup>
                         <br />
@@ -285,29 +240,19 @@ export default class GuessNumberPlayground extends Playground {
                     <div className="d-flex flex-column align-items-center justify-content-center guessnum-home-screen">
                         <p className="display-2">{this.state.text}</p>
                         <p className="display-4 text-success">Bingo!</p>
-                        { this.state.playerName &&
-                            <p>Winner: <b>{this.state.playerName}</b></p>
+                        {this.props.party.players.length > 1 &&
+                            <p>Winner: <b>{this.getTurnPlayer().name}</b></p>
                         }
                         <br />
-                        <div className="d-flex">
-                            <Button variant="success" onClick={() => {
-                                clearInterval(this.interval);
-                                document.getElementsByTagName("body")[0].classList.remove("guessnum-correct");
-                                this.ready();
-                            }}>Ready</Button>
-                            <Button variant="secondary" className="ml-3">Instructions</Button>
-                            <Button variant="danger" className="ml-3" onClick={() => {
-                                this.leave();
-                            }}>Leave</Button>
-                        </div>
+                        <p>You will be redirected back to the party dialog very soon.</p>
                     </div>
                 }
-                <NumericKeypad show={this.state.gameScreen} enabled={this.state.enabledKeys} doneEnabled={true} backspaceEnabled={true} onNumberClick={(evt) => {
+                <NumericKeypad show={this.state.keypadDisplay} enabled={this.state.enabledKeys} doneEnabled={this.state.funcKeyEnable} backspaceEnabled={this.state.funcKeyEnable} onNumberClick={(evt) => {
                     evt.preventDefault();
                     console.log("Click num");
                     var val = evt.target.innerHTML;
                     document.getElementById("guess-number-field").value = document.getElementById("guess-number-field").value + val;
-                    this.updateKeypad();
+                    //this.updateKeypad();
                 }} onDoneClick={(evt) => {
                     evt.preventDefault();
                     console.log("Click done");
@@ -316,7 +261,7 @@ export default class GuessNumberPlayground extends Playground {
                     evt.preventDefault();
                     console.log("Click bs");
                     document.getElementById("guess-number-field").value = document.getElementById("guess-number-field").value.slice(0, -1);
-                    this.updateKeypad();
+                    //this.updateKeypad();
                 }} />
             </div>
         );

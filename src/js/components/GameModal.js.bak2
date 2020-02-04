@@ -1,6 +1,5 @@
 ﻿import React from 'react';
 import { Modal, Button, ButtonGroup, InputGroup, FormControl, Form } from 'react-bootstrap';
-import * as Games from './Games';
 
 export default function(props) {
     return (
@@ -28,7 +27,7 @@ export default function(props) {
                         aria-describedby="party-code-field-addon"
                     />
                     <InputGroup.Append>
-                        <Button variant="success" onClick={props.joinGame}>Join</Button>
+                        <Button variant="success">Join</Button>
                     </InputGroup.Append>
                 </InputGroup>
                 <div className="d-flex">
@@ -36,17 +35,10 @@ export default function(props) {
                     <Button variant="secondary" className="ml-2"><i className="fas fa-cog"></i></Button>
                 </div>
                 <hr />
-                <p>Start a new game:</p>
-                <div className="hori-scroll">
-                    {Games.listOfGameButtons(props.startGame)}
+                <div className="d-flex">
+                    <Button variant="primary" block>Create a new party</Button>
+                    <Button variant="secondary ml-2 mt-0" block disabled={true}>Play locally</Button>
                 </div>
-                <Form.Check
-                    type="switch"
-                    id="local-mode-switch"
-                    label="Start game locally"
-                    checked={false}
-                    disabled
-                />
             </Modal.Body>
             <Modal.Footer>
                 <p>Application licensed under the GPLv3 Public License.</p>
