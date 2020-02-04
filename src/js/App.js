@@ -30,6 +30,18 @@ class App extends React.Component {
         this.listen();
     }
 
+    ccomponentDidMount() {
+        if (window.location.hash && window.location.hash.length === 6) {
+            var name = prompt("Enter your nickname:");
+
+            this.client.joinParty(name, window.location.hash);
+
+            this.setState({
+                gameModalShow: false
+            });
+        }
+    }
+
     listen() {
         this.client.on("party", (data) => {
             this.setState({
