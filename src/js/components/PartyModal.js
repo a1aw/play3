@@ -93,7 +93,7 @@ export default function (props) {
                         <InputGroup className="mb-2">
                             <FormControl
                                 id="share-link"
-                                value={"https://mob41.github.io/playplayplay/#" + props.party.partyId}
+                                value={"https://playplayplay.ml/#" + props.party.partyId}
                                 readOnly
                             />
                             <InputGroup.Append>
