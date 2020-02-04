@@ -1,67 +1,33 @@
-﻿import React from 'react';
+import React from 'react';
 import SetupLocalPlayersModal from './SetupLocalPlayersModal';
 import PassToPlayerModal from './PassToPlayerModal';
 import SelectKeypadKeyboardModal from './SelectKeypadKeyboardModal';
 import { Spinner } from 'react-bootstrap';
-import io from 'socket.io-client';
 
 export default class Playground extends React.Component {
 
-    constructor(props, gameId) {
+    constructor(props) {
         super(props);
-        this.gameId = gameId;
-        this.state = { turnPlayer: false, loading: true, loadingMsg: "Loading playground", keypad: true };
-        this.props.client.on("party", this.partyEventListener = (data) => {
-            if (data.event === "startGame") {
-                this.startGame();
-            } else if (data.event === "nextTurn") {
-                this.setState({
-                    turnPlayer: data.player
-                });
-                if (data.player.id === this.props.client.player.id) {
-                    this.myTurn();
-                }
-            }
-        });
-        this.props.client.on("game", this.gameEventListener = (data) => {
-            this.response(data);
-        });
-    }
-
-    bootDone() {
-        this.props.onBootDone();
-    }
-
-    request(req) {
-        this.props.client.gameRequest(req);
-    }
-
-    response(resp) {
-        this.onResponse(resp);
-    }
-
-    onResponse(resp) {
-        console.warn("No response handler handling responses from server.");
-        console.warn(resp);
-    }
-
-    unregisterEventListener() {
-        this.props.client.off("game", this.gameEventListener);
-        this.props.client.off("party", this.partyEventListener);
+        this.players = false;
+        this.turns = 0;
+        this.state = { loading: true, loadingMsg: "Loading playground", keypad: true };
     }
 
     componentDidMount() {
         //this.setState({ selectKeypadKeyboard: true });
-        this.enable();
+        if (this.props.localMode) {
+            this.setupLocalPlayers(this.getMinimumPlayers(), this.getMaximumPlayers());
+        } else {
+            this.enable();
+        }
     }
 
     componentWillUnmount() {
         this.disable();
-        this.unregisterEventListener();
     }
 
     isSetupComplete() {
-        return true;
+        return this.props.localMode && this.players;
     }
 
     setupLocalPlayers(min, max) {
@@ -73,33 +39,50 @@ export default class Playground extends React.Component {
         });
     }
 
-    getTurnPlayer() {
-        return this.state.turnPlayer;
-    }
-
-    isMyTurn() {
-        return this.state.turnPlayer && this.props.client.player.id === this.state.turnPlayer.id;
-    }
-
-    myTurn() {
-
-    }
-
     startGame() {
 
+    }
+
+    resetTurns() {
+        this.turns = 0;
+    }
+
+    ready() {
+        if (this.props.localMode) {
+            this.startGame();
+        }
+        //TODO Submit ready status
+    }
+
+    readyNextTurn() {
+        if (this.props.localMode) {
+            if (this.players.length > 1) {
+                var player = this.players[this.turns++ % this.players.length];
+                this.setState({ waitPlayer: true, playerName: player });
+            } else {
+                this.nextTurn();
+            }
+        } else {
+            //TODO online mode check
+        }
     }
 
     leave() {
         this.disable();
         this.props.onDisable();
-        alert("TODO: Leave");
-        window.location.reload();
         //TODO Submit leave status
     }
 
-    endGame() {
-        this.disable();
-        this.props.onDisable();
+    getMinimumPlayers() {
+        return 1;
+    }
+
+    getMaximumPlayers() {
+        return 1;
+    }
+
+    nextTurn() {
+
     }
 
     enable() {
@@ -115,11 +98,13 @@ export default class Playground extends React.Component {
     }
 
     render() {
-        var partyPlayers = this.props.party.players;
-        var playersList = [];
-        var i;
-        for (i = 0; i < partyPlayers.length; i++) {
-            playersList.push(<div key={partyPlayers[i].id}><span className={this.props.client.player.id === partyPlayers[i].id ? "font-weight-bold" : ""}>{(this.state.turnPlayer && this.state.turnPlayer.id === partyPlayers[i].id) ? "➡️ " : ""}{partyPlayers[i].name}</span><br /></div>);
+        var playersList = false;
+        if (this.players) {
+            playersList = [];
+            var i;
+            for (i = 0; i < this.players.length; i++) {
+                playersList.push(<div key={this.players[i]}><span className={this.state.playerName === this.players[i] ? "font-weight-bold" : ""}>{this.players[i]}</span><br /></div>);
+            }
         }
         return (
             <div className="container-fluid playground">

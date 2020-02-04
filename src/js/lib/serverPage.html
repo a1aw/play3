@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Playplayplay</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost');
+        socket.on("party", console.log)
+        var pn = prompt("Nick");
+        if (confirm("OK to join, else to create")) {
+            var pi = prompt("PartyID");
+            socket.emit("party", {
+                event: "join",
+                partyId: pi,
+                playerName: pn
+            });
+        } else {
+            socket.emit("party", {
+                event: "create",
+                gameId: "guessnum",
+                playerName: pn
+            });
+        }
+    </script>
+</head>
+<body>
+    <p>You are not supposed to reach here. Get to the home page of playplayplay.</p>
+</body>
+</html>
