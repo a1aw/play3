@@ -22,12 +22,12 @@ class GuessNumberGame extends Game {
     }
 
     startGame() {
-        this.numberMin = 1;
-        this.numberMax = this.maximum;
-
         if (this.party.players.length > 2) {
             this.maximum = DEFAULT_MAXIMUM * this.party.players.length;
         }
+
+        this.numberMin = 1;
+        this.numberMax = this.maximum;
 
         this.number = Math.floor(Math.random() * (this.maximum - 2)) + 2;
         this.broadcastNumberMinMax();
