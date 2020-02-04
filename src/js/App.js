@@ -30,11 +30,11 @@ class App extends React.Component {
         this.listen();
     }
 
-    ccomponentDidMount() {
-        if (window.location.hash && window.location.hash.length === 6) {
+    componentDidMount() {
+        if (window.location.search && window.location.search.length === 7) {
             var name = prompt("Enter your nickname:");
 
-            this.client.joinParty(name, window.location.hash);
+            this.client.joinParty(name, window.location.search.substring(1, 7));
 
             this.setState({
                 gameModalShow: false
