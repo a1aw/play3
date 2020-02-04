@@ -1,6 +1,8 @@
 var app = require('express')();
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(server, {
+    origins: "https://www.playplayplay.ml:*"
+});
 var Party = require("./party");
 var Player = require("./player");
 
@@ -10,11 +12,17 @@ server.listen(7692, () => {
 
 var parties = {};
 
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "https://www.playplayplay.ml");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+    next();
+});
+
 app.get('/*', function (req, res) {
     res.sendFile(__dirname + '/serverPage.html');
 });
-
-io.origins(["https://www.playplayplay.ml"]);
 
 io.on('connection', function (socket) {
     socket.on("game", (data) => {
