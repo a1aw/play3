@@ -1,6 +1,6 @@
 {
   "name": "playplayplay",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A platform to play games local/online",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
