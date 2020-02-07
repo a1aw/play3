@@ -11,9 +11,7 @@ class Game {
         this.turns = 0;
     }
 
-    nextTurn() {
-        var players = this.party.players;
-        var player = players[this.turns++ % players.length];
+    setTurn(player) {
         this.turnPlayer = player;
         this.broadcastNextTurn(player);
         if (player.aiMode) {
@@ -21,6 +19,12 @@ class Game {
         } else if (!player.online) {
             this.nextTurn();
         }
+    }
+
+    nextTurn() {
+        var players = this.party.players;
+        var player = players[this.turns++ % this.getMaximumPlayers()];
+        this.setTurn(player);
     }
 
     broadcastNextTurn(player) {

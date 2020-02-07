@@ -15,14 +15,6 @@ export default class GuessNumberPlayground extends Playground {
         this.guess = this.guess.bind(this);
     }
 
-    getMinimumPlayers() {
-        return 1;
-    }
-
-    getMaximumPlayers() {
-        return 4;
-    }
-
     enable() {
         this.setState({
             loading: false,

@@ -1,0 +1,41 @@
+import React from 'react';
+import Playground from '../components/Playground.js';
+
+export default class TemplatePlayground extends Playground {
+
+	constructor(props){
+        super(props, "template");
+    }
+
+    getMinimumPlayers() {
+        return 1;
+    }
+
+    getMaximumPlayers() {
+        return 4;
+    }
+
+    enable() {
+        this.bootDone();
+    }
+
+    disable() {
+
+    }
+
+    onResponse(resp) {
+
+    }
+
+    startGame() {
+
+    };
+
+    renderPlayground() {
+        return (
+            <div>
+            </div>
+        );
+	}
+
+}
