@@ -378,6 +378,10 @@ export default class BigTwoPlayground extends Playground {
                         evt.stopImmediatePropagation();
                         var el = evt.target;
 
+                        if (el.classList.contains("shown-cards")) {
+                            return;
+                        }
+
                         var selected = el.getAttribute("data-card-selected");
 
                         if (selected === "true") {
@@ -420,6 +424,10 @@ export default class BigTwoPlayground extends Playground {
                         evt.stopImmediatePropagation();
 
                         var el = evt.target;
+
+                        if (el.classList.contains("shown-cards")) {
+                            return;
+                        }
 
                         var selected = el.getAttribute("data-card-selected");
 

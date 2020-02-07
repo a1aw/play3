@@ -189,6 +189,13 @@ io.on('connection', function (socket) {
                     event: data.event + "Success"
                 });
                 return;
+            } else {
+                socket.emit("party", {
+                    event: data.event + "Failed",
+                    code: -6,
+                    msg: "AI player name is missing or duplicated"
+                });
+                return;
             }
 
             if (party.game.isGameStarted()) {
@@ -218,6 +225,26 @@ io.on('connection', function (socket) {
 
                 party.game.startGame();
                 party.broadcastStartGame();
+            } else if (data.event === "kickPlayer") {
+                var kp = party.getPlayerById(data.playerId);
+
+                if (!kp) {
+                    socket.emit("party", {
+                        event: data.event + "Failed",
+                        code: -7,
+                        msg: "No such player"
+                    });
+                    return;
+                }
+
+                if (!party.removePlayer(kp, false)) {
+                    socket.emit("party", {
+                        event: data.event + "Failed",
+                        code: -8,
+                        msg: "Could not remove player"
+                    });
+                    return;
+                }
             }
 
             socket.emit("party", {
