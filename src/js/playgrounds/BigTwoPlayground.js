@@ -24,6 +24,9 @@ export default class BigTwoPlayground extends Playground {
         window.addEventListener("resize", this.resizeEventListener = () => {
             this.resizeBoard();
         });
+        window.addEventListener("orientationchange", this.orientationChangeEventListener = () => {
+            this.resizeBoard();
+        });
         this.resizeBoard();
         this.deck = false;
         this.spreadCardsDone = false;
@@ -31,6 +34,7 @@ export default class BigTwoPlayground extends Playground {
 
     disable() {
         window.removeEventListener("resize", this.resizeEventListener);
+        window.removeEventListener("orientationchange", this.orientationChangeEventListener);
         clearTimeout(this.timeout);
     }
 
