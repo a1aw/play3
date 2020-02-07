@@ -4,8 +4,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "CNAME"
   },
   {
-    "revision": "221a891f658652643663",
-    "url": "app.4125f7bcfe94acfca451.js"
+    "revision": "34158707b9d187fc6f3d",
+    "url": "app.76f59c1e49b2359d3d22.js"
   },
   {
     "url": "f956b6d85f78462ab4adc75933f408cb.svg"
@@ -283,7 +283,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "img/playingcards/red_joker.svg"
   },
   {
-    "revision": "9a04ccb94281f50ac1721bdf3335850e",
+    "revision": "e786342f01e021f3ccce6644f7585935",
     "url": "index.html"
   },
   {
