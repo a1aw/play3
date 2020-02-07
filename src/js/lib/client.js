@@ -116,6 +116,15 @@ export default class Client {
         });
     }
 
+    kickPlayer(playerId) {
+        this.socketEmit("party", {
+            event: "kickPlayer",
+            token: this.token,
+            partyId: this.party.partyId,
+            playerId: playerId
+        });
+    }
+
     gameInitReady() {
         this.socketEmit("party", {
             event: "gameInitReady",

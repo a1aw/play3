@@ -6,7 +6,7 @@ export default function(props) {
     return (
         <Modal show={props.show} animation={false} backdrop="static">
             <Modal.Header>
-                <Modal.Title>Play³</Modal.Title>
+                <Modal.Title>Play³ ({VERSION})</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <label>Nickname:</label>
