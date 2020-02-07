@@ -228,7 +228,7 @@ io.on('connection', function (socket) {
                 party.game.startGame();
                 party.broadcastStartGame();
             } else if (data.event === "kickPlayer") {
-                var kp = party.getPlayerById(data.playerId);
+                var kp = party.getPlayerById(data.kickPlayerId);
 
                 if (!kp) {
                     socket.emit("party", {

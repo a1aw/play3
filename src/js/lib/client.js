@@ -121,7 +121,8 @@ export default class Client {
             event: "kickPlayer",
             token: this.token,
             partyId: this.party.partyId,
-            playerId: playerId
+            playerId: this.player.id,
+            kickPlayerId: playerId
         });
     }
 
