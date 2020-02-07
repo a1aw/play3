@@ -180,22 +180,24 @@ io.on('connection', function (socket) {
                 return;
             }
 
-            if (data.event === "addAi" && data.playerName !== "") {
-                var player = new Player(getRandomMixedLetters(24), data.playerName, getRandomMixedLetters(64), false);
-                player.online = false;
-                player.aiMode = true;
-                party.addPlayer(player);
-                socket.emit("party", {
-                    event: data.event + "Success"
-                });
-                return;
-            } else {
-                socket.emit("party", {
-                    event: data.event + "Failed",
-                    code: -6,
-                    msg: "AI player name is missing or duplicated"
-                });
-                return;
+            if (data.event === "addAi") {
+                if (data.playerName !== "") {
+                    var player = new Player(getRandomMixedLetters(24), data.playerName, getRandomMixedLetters(64), false);
+                    player.online = false;
+                    player.aiMode = true;
+                    party.addPlayer(player);
+                    socket.emit("party", {
+                        event: data.event + "Success"
+                    });
+                    return;
+                } else {
+                    socket.emit("party", {
+                        event: data.event + "Failed",
+                        code: -6,
+                        msg: "AI player name is missing or duplicated"
+                    });
+                    return;
+                }
             }
 
             if (party.game.isGameStarted()) {
