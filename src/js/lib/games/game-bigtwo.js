@@ -399,9 +399,7 @@ class BigTwoGame extends Game {
 
         if (this.lastCombination && this.lastPlayer && this.lastPlayer.id !== player.id) {
             reqCombName = this.lastCombination.combinationName;
-        }
-
-        if (!reqCombName) {
+        } else {
             //TODO game logic
             reqCombName = "single";
         }
