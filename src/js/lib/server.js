@@ -144,7 +144,7 @@ io.on('connection', function (socket) {
                 });
                 return;
             }
-        } else if (data.event === "gameInitReady" || data.event === "playerReady" || data.event === "playerUnready" || data.event === "startGame" || data.event === "addAi") {
+        } else if (data.event === "gameInitReady" || data.event === "playerReady" || data.event === "playerUnready" || data.event === "startGame" || data.event === "addAi" || data.event === "kickPlayer") {
             if (!data.partyId || !data.playerId || !data.token) {
                 return;
             }
