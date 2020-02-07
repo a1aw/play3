@@ -143,6 +143,13 @@ class Party {
                 this.broadcastPlayerChanged(player);
             } else {
                 //Remove player
+                var index = -1;
+                var i;
+                for (i = 0; i < this.players.length; i++) {
+                    if (this.players[i].id === player.id) {
+                        index = i;
+                    }
+                }
                 this.players.splice(index, 1);
                 this.broadcastPlayerListChanged();
             }
