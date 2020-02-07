@@ -4,28 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <title>Playplayplay</title>
-    <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io.connect('http://localhost');
-        socket.on("party", console.log)
-        var pn = prompt("Nick");
-        if (confirm("OK to join, else to create")) {
-            var pi = prompt("PartyID");
-            socket.emit("party", {
-                event: "join",
-                partyId: pi,
-                playerName: pn
-            });
-        } else {
-            socket.emit("party", {
-                event: "create",
-                gameId: "guessnum",
-                playerName: pn
-            });
-        }
+        window.location = "https://mob41.github.io/playplayplay/";
     </script>
 </head>
 <body>
-    <p>You are not supposed to reach here. Get to the home page of playplayplay.</p>
+    <p>You are not supposed to reach here. Get to <a href="https://mob41.github.io/playplayplay/">the home page of playplayplay.</a></p>
 </body>
 </html>

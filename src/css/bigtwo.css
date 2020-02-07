@@ -1,0 +1,123 @@
+.board {
+    position: fixed;
+    left: calc(50% - 50em);
+    top: calc(50% - 28.125em);
+    width: 100em;
+    height: 56.25em;
+}
+
+.board .playingcards {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.board .playingcards .playingcard {
+    position: absolute;
+    width: 6.25em;
+    height: 9.08em;
+    top: -4.54em;
+    left: -3.125em;
+    background-size: cover;
+    background-image: url("../img/playingcards/back.svg");
+    transition: all 0.5s ease-in-out;
+    -webkit-transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -o-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+	transform-origin: 50% 50%;
+}
+
+.combination-buttons {
+    position: absolute;
+    left: -24em;
+    top: 6em;
+    z-index: 53;
+}
+
+.combination-buttons button {
+    padding: .75rem 1.5rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    border-radius: .45rem;
+    white-space: nowrap;
+}
+
+.turn-buttons {
+    position: absolute;
+    left: -12em;
+    top: 2em;
+    z-index: 53;
+}
+
+.turn-buttons button {
+    padding: .75rem 1.5rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    border-radius: .45rem;
+    white-space: nowrap;
+}
+
+.player1 {
+    position: absolute;
+    left: -31em;
+    top: -5.5em;
+    font-size: 1.5rem;
+    white-space: nowrap;
+}
+
+.player2 {
+    position: absolute;
+    left: 3em;
+    top: -13em;
+    font-size: 1.5rem;
+    white-space: nowrap;
+}
+
+.player3 {
+    position: absolute;
+    left: 27em;
+    top: -5.5em;
+    font-size: 1.5rem;
+    white-space: nowrap;
+}
+
+.waiting-players {
+    position: absolute;
+    left: -4.5em;
+    top: -1em;
+    font-size: 2.5rem;
+    white-space: nowrap;
+}
+
+.left-player-passed {
+    position: absolute;
+    left: -12em;
+    top: -1em;
+    font-size: 3rem;
+    white-space: nowrap;
+}
+
+.right-player-passed {
+    position: absolute;
+    left: 9em;
+    top: -1em;
+    font-size: 3rem;
+    white-space: nowrap;
+}
+
+.top-player-passed {
+    position: absolute;
+    left: -1.5em;
+    top: -3em;
+    font-size: 3rem;
+    white-space: nowrap;
+}
+
+.bottom-player-passed {
+    position: absolute;
+    left: -1.5em;
+    top: 0.5em;
+    font-size: 3rem;
+    white-space: nowrap;
+}

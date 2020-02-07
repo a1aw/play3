@@ -1,7 +1,7 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {
-    origins: "https://www.playplayplay.ml:*"
+    origins: "*:*"
 });
 var Party = require("./party");
 var Player = require("./player");
@@ -180,7 +180,7 @@ io.on('connection', function (socket) {
                 return;
             }
 
-            if (data.event === "addAi") {
+            if (data.event === "addAi" && data.playerName !== "") {
                 var player = new Player(getRandomMixedLetters(24), data.playerName, getRandomMixedLetters(64), false);
                 player.online = false;
                 player.aiMode = true;

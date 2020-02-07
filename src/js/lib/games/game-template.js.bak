@@ -1,0 +1,43 @@
+var Game = require("../game");
+
+class TemplateGame extends Game {
+
+    constructor(party) {
+        super("template", party);
+    }
+
+    isNewPlayersAllowed() {
+        return false;
+    }
+
+    isGameStarted() {
+        return this.gameStarted;
+    }
+
+    isGameOver() {
+        return this.gameOver;
+    }
+
+    startGame() {
+        this.gameStarted = true;
+    }
+
+    enable() {
+        this.gameOver = false;
+    }
+
+    disable() {
+
+    }
+
+    onRequest(player, req) {
+
+    }
+
+    onAi(player) {
+
+    }
+
+}
+
+module.exports = TemplateGame;

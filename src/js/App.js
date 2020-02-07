@@ -17,7 +17,20 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.client = new Client("https://0.playplayplay.ml");
+
+        var endPoint = "https://0.playplayplay.ml";
+
+        var savedEndPoint = localStorage.getItem("endpoint");
+        if (localStorage && savedEndPoint) {
+            endPoint = savedEndPoint;
+            /*
+            if (confirm("Warning: Your game API endpoint will be pointed to \"" + savedEndPoint + "\". Modify your LocalStorage or clear browser history to point back to default server. Are you sure to continue with this API endpoint?")) {
+
+            };
+            */
+        }
+
+        this.client = new Client(endPoint);
         this.state = {
             gameModalShow: true,
             partyModalShow: false,
@@ -52,22 +65,16 @@ class App extends React.Component {
                 this.setState({
                     gameInitReadyList: this.client.gameInitReadyList
                 });
-            }
-
-            if (data.event === "playerReady") {
+            } else if (data.event === "playerReady") {
                 this.setState({
                     playerReadyList: this.client.playerReadyList
                 });
-            }
-
-            if (data.event === "startGame") {
+            } else if (data.event === "startGame") {
                 this.setState({
                     gameModalShow: false,
                     partyModalShow: false
                 });
-            }
-
-            if (this.client.party && this.client.party.gameId && (data.event === "partyJoined" || data.event === "gameChanged")) {
+            } else if (this.client.party && this.client.party.gameId && (data.event === "partyJoined" || data.event === "gameChanged")) {
                 if (this.state.playground) {
                     this.setState({
                         awaitChangeGame: true

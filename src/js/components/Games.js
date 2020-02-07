@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
+import BigTwoPlayground from '../playgrounds/BigTwoPlayground'
 /*
-import ClassicPlayground from '../playgrounds/ClassicPlayground'
 import RoyalPlayground from '../playgrounds/RoyalPlayground'
 import TwentyOnePlayground from '../playgrounds/TwentyOnePlayground'
 */
@@ -11,14 +11,14 @@ import GuessBigPlayground from '../playgrounds/GuessBigPlayground'
 */
 
 const Def = {
-    /*
-    "classic": {
-        instance: ClassicPlayground,
+    "bigtwo": {
+        instance: BigTwoPlayground,
         icon: "fas fa-heart",
-        name: "Classic",
-        minPlayers: 1,
+        name: "Big Two",
+        minPlayers: 4,
         maxPlayers: 4
     },
+    /*
     "royal": {
         instance: RoyalPlayground,
         icon: "fas fa-grin-stars",
@@ -39,7 +39,7 @@ const Def = {
         icon: "fas fa-list-ol",
         name: "Guess Number",
         minPlayers: 1,
-        maxPlayers: 4
+        maxPlayers: 10
     }
     /*,
     "guessbig": {
@@ -73,14 +73,16 @@ export function getMaximumPlayers(gameId) {
 }
 
 export function makeGameButton(gameId, disabled, onClickFunc) {
-    return <Button key={gameId} variant="secondary" disabled={disabled} onClick={onClickFunc}><i className={Def[gameId].icon + " fa-2x"}></i><br />{Def[gameId].name}</Button>
+    return <Button key={gameId} variant="secondary" disabled={disabled} onClick={() => {
+        onClickFunc(gameId);
+    }}><i className={Def[gameId].icon + " fa-2x"}></i><br />{Def[gameId].name}</Button>
 }
 
 export function listOfGameButtons(startGameFunc) {
     var out = [];
     for (var gameKey in Def) {
         out.push(
-            makeGameButton(gameKey, false, () => { startGameFunc(gameKey) })
+            makeGameButton(gameKey, false, startGameFunc)
         );
     }
     return out;
