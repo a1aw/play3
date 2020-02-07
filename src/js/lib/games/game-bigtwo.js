@@ -230,13 +230,25 @@ class BigTwoGame extends Game {
             event: "gameReady"
         });
 
+        this.processAwaitAiRequests();
+    }
+
+    processAwaitAiRequests() {
         this.timeout = setTimeout(() => {
-            if (this.awaitAi.length > 0) {
-                var player = this.awaitAi.shift();
-                var req = this.aiLogic(player);
-                this.request(player, req);
+            if (this.isAllPlayersReady()) {
+                this.runAwaitAiRequest();
+            } else {
+                this.processAwaitAiRequests();
             }
         }, 1000);
+    }
+
+    runAwaitAiRequest() {
+        if (this.awaitAi.length > 0) {
+            var player = this.awaitAi.shift();
+            var req = this.aiLogic(player);
+            this.request(player, req);
+        }
     }
 
     onRequest(player, req) {
