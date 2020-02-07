@@ -362,6 +362,7 @@ class BigTwoGame extends Game {
                     if (deck.length === 0) {
                         this.gameOver = true;
                         this.broadcastGameOver();
+                        this.endGame();
                     } else {
                         this.cardNextTurn();
                     }
