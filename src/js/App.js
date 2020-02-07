@@ -86,6 +86,8 @@ class App extends React.Component {
                     });
                     this.updatePlayground();
                 }
+            } else if (data.event && data.event.endsWith("Failed")) {
+                alert("Code: " + data.code + "\nError: " + data.msg);
             }
         });
     }

@@ -62,6 +62,7 @@ export default class BigTwoPlayground extends Playground {
                 displayWaitingPlayers: false
             });
             if (this.isMyTurn()) {
+                this.removePlayerLastCards(this.props.client.player);
                 this.setState({
                     displayBottomPlayerPassed: false,
                     displayTurnButtons: true
@@ -72,29 +73,43 @@ export default class BigTwoPlayground extends Playground {
                 passBtnDisabled: false
             });
             this.lastPlayer = resp.player;
-
+            
             this.setPassed(resp.player, false);
 
             var cards = this.fc.jsonToCards(resp.cards);
             this.lastCombination = makeCombination(cards);
 
-            this.showPlayerLastCards(this.lastPlayer, cards);
+            if (this.lastPlayer.id !== this.props.client.player.id) {
+                this.removePlayerLastCards(this.lastPlayer);
+                this.showPlayerLastCards(this.lastPlayer, cards);
+            }
 
             this.sendGameReady();
         } else if (resp.event === "lastPassed") {
             this.setPassed(resp.player, true);
+            this.removePlayerLastCards(resp.player);
             this.sendGameReady();
         } else if (resp.event === "gameOver") {
             var decks = resp.playerDecks;
             var loc;
+            var player;
             for (var key in decks) {
-                this.showPlayerLastCards(this.getPlayerById(key), decks[key], true);
+                player = this.getPlayerById(key);
+                this.setPassed(player, false);
+                this.removePlayerLastCards(this.lastPlayer);
+                this.showPlayerLastCards(player, decks[key], true);
             }
+
+            this.setState({
+                winner: resp.winner,
+                displayWinner: true
+            });
+
             setTimeout(() => {
-                if (confirm("Winner: " + resp.winner.name + ". Click OK to Refresh.")) {
-                    window.location.reload();
-                }
+                this.endGame();
             }, 10000);
+        } else if (resp.event && resp.event.endsWith("Failed")) {
+            alert("Code: " + resp.code + "\nError: " + resp.msg);
         }
     }
 
@@ -108,8 +123,6 @@ export default class BigTwoPlayground extends Playground {
     }
 
     setPassed(player, passed) {
-        this.removePlayerLastCards(player);
-
         var loc = this.playerCardsMap[player.id];
         if (loc === "left-cards") {
             this.setState({
@@ -158,7 +171,7 @@ export default class BigTwoPlayground extends Playground {
             if (cardIndex >= this.deck.length) {
                 console.log("remove");
                 console.log(el.style.backgroundImage);
-                el.style.backgroundImage = `url(../../img/playingcards/back.svg)`;
+                //el.style.backgroundImage = `url(../../img/playingcards/back.svg)`;
                 toRemove.push(el);
             } else {
                 card = this.deck[cardIndex];
@@ -169,9 +182,17 @@ export default class BigTwoPlayground extends Playground {
                 el.style.backgroundImage = `url(../../img/playingcards/${card.rank}_of_${card.suit}.svg)`;
             }
         }
-
+        
+        var halfLength = 3.125 * (toRemove.length + 1) * 0.5;
+        var calc;
+        var card;
         for (i = 0; i < toRemove.length; i++) {
-            parent.removeChild(toRemove[i]);
+            calc = -halfLength + 3.125 * i;
+            card = this.myTurnCards[i];
+            toRemove[i].classList.add("shown-cards");
+            toRemove[i].style.transition = "all 0.5s ease-in-out";
+            toRemove[i].style.transform = " translate(" + calc + "em, 5.705em)";
+            toRemove[i].style.backgroundImage = `url(../../img/playingcards/${card.rank}_of_${card.suit}.svg)`;
         }
     }
 
@@ -242,13 +263,23 @@ export default class BigTwoPlayground extends Playground {
     removePlayerLastCards(player) {
         var loc = this.playerCardsMap[player.id];
 
+        console.log("Removing for " + loc + " from " + player.name);
+
         var parent = document.getElementById("cards-container");
 
         var els = document.getElementsByClassName("shown-cards");
+        var toRemove = [];
         for (var el of els) {
+            console.log(el);
             if (el.classList.contains(loc)) {
-                parent.removeChild(el);
+                console.log("removing");
+                toRemove.push(el);
             }
+        }
+
+        var i;
+        for (i = 0; i < toRemove.length; i++) {
+            parent.removeChild(toRemove[i]);
         }
     }
 
@@ -565,6 +596,7 @@ export default class BigTwoPlayground extends Playground {
         }
 
         this.sendTurn(cards);
+        this.myTurnCards = cards;
     }
 
     getSelectedCards() {
@@ -591,6 +623,11 @@ export default class BigTwoPlayground extends Playground {
         return (
             <div className="board" id="playingcards-board">
                 <div className="playingcards" id="cards-container">
+                    {this.state.displayWinner &&
+                        <div className="waiting-players align-items-center justify-items-center">
+                            Winner: {this.state.winner.name}
+                        </div>
+                    }
                     {this.state.displayWaitingPlayers &&
                         <div className="waiting-players align-items-center justify-items-center">
                             Waiting other players...
