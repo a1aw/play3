@@ -157,26 +157,17 @@ class BigTwoGame extends Game {
         var j;
         var found;
         for (i = 0; i < cards.length; i++) {
-            this.condLog("i: " + i);
             found = false;
             for (j = 0; j < deck.length; j++) {
-                this.condLog("j: " + j);
-                this.condLog("Checking card[i]");
-                this.condLog(cards[i]);
-                this.condLog("checking deck[j]");
-                this.condLog(deck[j]);
                 if (cards[i].equals(deck[j])) {
-                    this.condLog("Found: " + cards[i].suit + " " + cards[i].rank);
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                this.condLog("Not Found: " + cards[i].suit + " " + cards[i].rank);
                 return false;
             }
         }
-        this.condLog("success");
         return true;
     }
 
@@ -187,34 +178,22 @@ class BigTwoGame extends Game {
     */
     
     removeCardsFromDeck(deck, cards) {
-        this.condLog("X+X+X+X+X++X REMOING CARDS");
-        this.condLog("deck:");
-        this.condLog(deck);
-        this.condLog("cards to remvoe:");
-        this.condLog(cards)
         var i;
         var j;
         var found;
         for (i = 0; i < cards.length; i++) {
-            this.condLog("i: " + i);
             found = false;
             for (j = 0; j < deck.length; j++) {
-                this.condLog("j: " + j);
                 if (cards[i].equals(deck[j])) {
-                    this.condLog("Found: " + cards[i].suit + " " + cards[i].rank);
                     found = true;
-                    this.condLog("Remove " + j);
                     deck.splice(j, 1);
                     break;
                 }
             }
             if (!found) {
-                this.condLog("Not found: " + cards[i].suit + " " + cards[i].rank);
                 return false;
             }
         }
-        this.condLog("*********** NEW DECK");
-        this.condLog(deck);
         return true;
     }
 
@@ -278,39 +257,18 @@ class BigTwoGame extends Game {
         }
     }
 
-    condLog(text) {
-        if (this.showLog) {
-            console.log(text);
-        }
-    }
-
     onRequest(player, req) {
-        if (!player.aiMode) {
-            this.showLog = true;
-            this.condLog("=========================== REAL PLAYER");
-        } else {
-            this.showLog = false;
-            this.condLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX AI");
-        }
-        this.condLog("Nwe req");
-        this.condLog(req);
         if (!req) {
-            this.condLog("empty req");
             return;
         }
         if (!this.gameOver) {
             if (req.event === "gameReady") {
-                this.condLog("Game ready for " + player.id);
                 this.allPlayersReadyList[player.id] = true;
                 if (this.isAllPlayersReady()) {
-                    this.condLog("All palyers ready");
                     this.broadcastGameReady();
-                } else {
-                    this.condLog("Not ready");
                 }
             } else if (this.turnPlayer && this.turnPlayer.id === player.id) {
                 if (!this.isAllPlayersReady()) {
-                    this.condLog("NOT REDAY: " + player.name);
                     player.sendGameEvent({
                         event: "requestFailed",
                         code: -1,
@@ -322,25 +280,13 @@ class BigTwoGame extends Game {
                 this.waitAllPlayersReady();
 
                 if (req.event === "turn") {
-                    if (!player.aiMode) {
-                        this.condLog("=========================== REAL PLAYER");
-                    } else {
-                        this.condLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX AI");
-                    }
                     var cards = this.fc.jsonToCards(req.cards);
 
                     var turnDeck = this.fc.cardsToDeck(cards);
 
                     var deck = this.playerDecks[player.id];
 
-                    this.condLog("deck:");
-                    this.condLog(deck);
-
-                    this.condLog("turnDeck:");
-                    this.condLog(turnDeck);
-
                     if (!this.isCardsInDeck(deck, turnDeck)) {
-                        this.condLog("No such cards");
                         player.sendGameEvent({
                             event: "turnFailed",
                             code: -1,
@@ -352,7 +298,6 @@ class BigTwoGame extends Game {
                     var combination = makeCombination(turnDeck);
 
                     if (!combination) {
-                        this.condLog("invaldi turn combin");
                         player.sendGameEvent({
                             event: "turnFailed",
                             code: -2,
@@ -371,7 +316,6 @@ class BigTwoGame extends Game {
                         }
 
                         if (!d3Found) {
-                            this.condLog("must include a diamond-3");
                             player.sendGameEvent({
                                 event: "turnFailed",
                                 code: -3,
@@ -381,7 +325,6 @@ class BigTwoGame extends Game {
                         }
                     } else if (this.lastPlayer.id !== player.id) {
                         if (combination.combinationName !== this.lastCombination.combinationName) {
-                            this.condLog("type not same");
                             player.sendGameEvent({
                                 event: "turnFailed",
                                 code: -5,
@@ -393,7 +336,6 @@ class BigTwoGame extends Game {
                         var compare = combination.compare(this.lastCombination);
 
                         if (compare <= 0) {
-                            this.condLog("last comb not big");
                             player.sendGameEvent({
                                 event: "turnFailed",
                                 code: -6,
@@ -404,7 +346,6 @@ class BigTwoGame extends Game {
                     }
 
                     if (!this.removeCardsFromDeck(deck, turnDeck)) {
-                        this.condLog("remove unsuccess");
                         player.sendGameEvent({
                             event: "turnFailed",
                             code: -7,
@@ -445,9 +386,7 @@ class BigTwoGame extends Game {
     }
 
     aiLogic(player) {
-        //this.condLog("Excuting ai request");
         var deck = this.playerDecks[player.id];
-        //this.condLog(deck);
 
         var reqCombName = false;
 
@@ -494,7 +433,6 @@ class BigTwoGame extends Game {
                     ]
                 };
             } else {
-                this.condLog("No singles");
                 return {
                     event: "pass"
                 };
