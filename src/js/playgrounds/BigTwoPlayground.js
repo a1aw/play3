@@ -5,6 +5,7 @@ import Card from '../lib/games/bigtwo/card';
 import Sizes from '../lib/games/bigtwo/sizes';
 import makeCombination from '../lib/games/bigtwo/makeCombination';
 import { Button, ButtonGroup } from 'react-bootstrap';
+import BigTwoGameOverModal from '../components/BigTwoGameOverModal';
 import '../../css/bigtwo.css';
 
 export default class BigTwoPlayground extends Playground {
@@ -47,17 +48,18 @@ export default class BigTwoPlayground extends Playground {
         console.log("Response");
         console.log(resp);
         if (resp.event === "newDeck") {
-            this.deck = this.fc.jsonToCards(resp.deck);
+            this.deck = this.fc.jsonToDeck(resp.deck);
             console.log("New deck recevied");
             this.updateAvailableCombinations();
             if (!this.spreadCardsDone) {
                 this.spreadCards();
             }
         } else if (resp.event === "updateDeck") {
-            this.deck = this.fc.jsonToCards(resp.deck);
+            //this.deck = this.fc.jsonToDeck(resp.deck);
             console.log("Deck update recevied");
-            this.updateAvailableCombinations();
+            this.myTurnCards = resp.cards;
             this.updateDeck();
+            this.updateAvailableCombinations();
         } else if (resp.event === "numberOfCards") {
             this.numberOfCards = resp.numberOfCards;
             this.updateNumberOfCards();
@@ -80,7 +82,7 @@ export default class BigTwoPlayground extends Playground {
             
             this.setPassed(resp.player, false);
 
-            var cards = this.fc.jsonToCards(resp.cards);
+            var cards = this.fc.jsonToDeck(resp.cards);
             this.lastCombination = makeCombination(cards);
 
             if (this.lastPlayer.id !== this.props.client.player.id) {
@@ -105,13 +107,18 @@ export default class BigTwoPlayground extends Playground {
             }
 
             this.setState({
-                winner: resp.winner,
-                displayWinner: true
+                winner: resp.winner
             });
 
-            setTimeout(() => {
-                this.endGame();
-            }, 10000);
+            this.timeout = setTimeout(() => {
+                this.setState({
+                    displayWinner: true
+                });
+
+                this.timeout = setTimeout(() => {
+                    this.endGame();
+                }, 8000);
+            }, 2000);
         } else if (resp.event && resp.event.endsWith("Failed")) {
             alert("Code: " + resp.code + "\nError: " + resp.msg);
         }
@@ -153,46 +160,75 @@ export default class BigTwoPlayground extends Playground {
         this.unselectAllCards();
         var elements = document.getElementsByClassName("bottom-cards");
 
-        console.log(elements);
+        console.log("old deck");
+        console.log(this.deck);
 
+        console.log("My turn cards");
+        console.log(this.myTurnCards);
+
+        var indexes = [];
+        var index;
+        var i;
+
+        for (i = 0; i < this.myTurnCards.length; i++) {
+            indexes.push(this.myTurnCards[i].index);
+        }
+
+        var newDeck = [];
+
+        for (i = 0; i < this.deck.length; i++) {
+            if (!indexes.includes(i)) {
+                newDeck.push(this.deck[i]);
+            }
+        }
+
+        this.deck = newDeck;
+
+        console.log("Indexes");
+        console.log(indexes);
+
+        console.log("new deck");
+        console.log(this.deck);
+
+        var halfLength = (6.25 * this.deck.length + 0.52 * (this.deck.length - 1)) * -0.5;
         var cardIndex;
         var card;
-        var halfLength = (6.25 * this.deck.length + 0.52 * (this.deck.length - 1)) * -0.5;
         var calc;
-        console.log("====== checking elements ");
-        var i;
         var el;
-
+        var c = 0;
         var toRemove = [];
+
         for (i = 0; i < elements.length; i++) {
-            console.log("INDEX: " + i);
             el = elements[i];
             cardIndex = parseInt(el.getAttribute("data-card-index"));
-
-            console.log("Cardindex: " + cardIndex);
-            console.log("decklen: " + this.deck.length);
-
-            if (cardIndex >= this.deck.length) {
-                console.log("remove");
-                console.log(el.style.backgroundImage);
-                //el.style.backgroundImage = `url(../../img/playingcards/back.svg)`;
+            console.log("=========== ELEMENT " + i + " INDEX " + cardIndex);
+            if (indexes.includes(cardIndex)) {
+                console.log("Removing: " + el.style.backgroundImage);
                 toRemove.push(el);
             } else {
-                card = this.deck[cardIndex];
-                calc = halfLength + 6.77 * (cardIndex);
+                console.log("Keeping " + el.style.backgroundImage)
+                card = this.deck[c];
+                console.log("card");
+                console.log(card);
+                console.log("new index:" + c);
+                calc = halfLength + 6.77 * c;
 
+                el.setAttribute("data-card-index", c);
                 el.style.transition = "all 0.5s";
                 el.style.transform = "translate(" + calc + "em, 15.92em)";
                 el.style.backgroundImage = `url(../../img/playingcards/${card.rank}_of_${card.suit}.svg)`;
+
+                console.log("New image " + el.style.backgroundImage)
+                c++;
             }
         }
         
-        var halfLength = 3.125 * (toRemove.length + 1) * 0.5;
+        var toRemoveHalfLength = 3.125 * (toRemove.length + 1) * 0.5;
         var calc;
         var card;
         for (i = 0; i < toRemove.length; i++) {
-            calc = -halfLength + 3.125 * i;
-            card = this.myTurnCards[i];
+            calc = -toRemoveHalfLength + 3.125 * i;
+            card = this.myTurnCards[i].card;
             toRemove[i].classList.add("shown-cards");
             toRemove[i].style.transition = "all 0.5s ease-in-out";
             toRemove[i].style.transform = " translate(" + calc + "em, 5.705em)";
@@ -560,9 +596,10 @@ export default class BigTwoPlayground extends Playground {
         });
 
         var cards = this.getSelectedCards();
+        var deck = this.fc.cardsToDeck(cards);
         if (!this.lastPlayer || !this.lastCombination) {
             var d3Found = false;
-            for (var card of cards) {
+            for (var card of deck) {
                 if (card.suit === "diamonds" && card.rank === "3") {
                     d3Found = true;
                     break;
@@ -578,7 +615,7 @@ export default class BigTwoPlayground extends Playground {
             }
         }
 
-        var combination = makeCombination(cards);
+        var combination = makeCombination(deck);
 
         if (!combination) {
             alert("Invalid combination.");
@@ -608,7 +645,6 @@ export default class BigTwoPlayground extends Playground {
         }
 
         this.sendTurn(cards);
-        this.myTurnCards = cards;
     }
 
     getSelectedCards() {
@@ -618,7 +654,10 @@ export default class BigTwoPlayground extends Playground {
         for (var el of els) {
             if (el.getAttribute("data-card-selected") === "true") {
                 cardIndex = parseInt(el.getAttribute("data-card-index"));
-                out.push(this.deck[cardIndex]);
+                out.push({
+                    index: cardIndex,
+                    card: this.deck[cardIndex]
+                });
             }
         }
         return out;
@@ -635,11 +674,7 @@ export default class BigTwoPlayground extends Playground {
         return (
             <div className="board" id="playingcards-board">
                 <div className="playingcards" id="cards-container">
-                    {this.state.displayWinner &&
-                        <div className="waiting-players align-items-center justify-items-center">
-                            Winner: {this.state.winner.name}
-                        </div>
-                    }
+                    <BigTwoGameOverModal show={this.state.displayWinner} winner={this.state.winner} onHide={() => { this.setState({ displayWinner: false }) }} />
                     {this.state.displayWaitingPlayers &&
                         <div className="waiting-players align-items-center justify-items-center">
                             Waiting other players...

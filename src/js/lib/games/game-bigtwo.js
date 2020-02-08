@@ -82,10 +82,10 @@ class BigTwoGame extends Game {
         });
     }
 
-    updateDeck(player, deck) {
+    updateDeck(player, cards) {
         player.sendGameEvent({
             event: "updateDeck",
-            deck: deck
+            cards: cards
         });
     }
 
@@ -157,37 +157,64 @@ class BigTwoGame extends Game {
         var j;
         var found;
         for (i = 0; i < cards.length; i++) {
+            this.condLog("i: " + i);
             found = false;
             for (j = 0; j < deck.length; j++) {
+                this.condLog("j: " + j);
+                this.condLog("Checking card[i]");
+                this.condLog(cards[i]);
+                this.condLog("checking deck[j]");
+                this.condLog(deck[j]);
                 if (cards[i].equals(deck[j])) {
+                    this.condLog("Found: " + cards[i].suit + " " + cards[i].rank);
                     found = true;
                     break;
                 }
             }
             if (!found) {
+                this.condLog("Not Found: " + cards[i].suit + " " + cards[i].rank);
                 return false;
             }
         }
+        this.condLog("success");
         return true;
     }
 
+    /*
     removeCardsFromDeck(deck, cards) {
+
+    }
+    */
+    
+    removeCardsFromDeck(deck, cards) {
+        this.condLog("X+X+X+X+X++X REMOING CARDS");
+        this.condLog("deck:");
+        this.condLog(deck);
+        this.condLog("cards to remvoe:");
+        this.condLog(cards)
         var i;
         var j;
         var found;
         for (i = 0; i < cards.length; i++) {
+            this.condLog("i: " + i);
             found = false;
             for (j = 0; j < deck.length; j++) {
+                this.condLog("j: " + j);
                 if (cards[i].equals(deck[j])) {
+                    this.condLog("Found: " + cards[i].suit + " " + cards[i].rank);
                     found = true;
+                    this.condLog("Remove " + j);
                     deck.splice(j, 1);
                     break;
                 }
             }
             if (!found) {
+                this.condLog("Not found: " + cards[i].suit + " " + cards[i].rank);
                 return false;
             }
         }
+        this.condLog("*********** NEW DECK");
+        this.condLog(deck);
         return true;
     }
 
@@ -251,26 +278,39 @@ class BigTwoGame extends Game {
         }
     }
 
+    condLog(text) {
+        if (this.showLog) {
+            console.log(text);
+        }
+    }
+
     onRequest(player, req) {
-        console.log("Nwe req");
-        console.log(req);
+        if (!player.aiMode) {
+            this.showLog = true;
+            this.condLog("=========================== REAL PLAYER");
+        } else {
+            this.showLog = false;
+            this.condLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX AI");
+        }
+        this.condLog("Nwe req");
+        this.condLog(req);
         if (!req) {
-            console.log("empty req");
+            this.condLog("empty req");
             return;
         }
         if (!this.gameOver) {
             if (req.event === "gameReady") {
-                console.log("Game ready for " + player.id);
+                this.condLog("Game ready for " + player.id);
                 this.allPlayersReadyList[player.id] = true;
                 if (this.isAllPlayersReady()) {
-                    console.log("All palyers ready");
+                    this.condLog("All palyers ready");
                     this.broadcastGameReady();
                 } else {
-                    console.log("Not ready");
+                    this.condLog("Not ready");
                 }
             } else if (this.turnPlayer && this.turnPlayer.id === player.id) {
                 if (!this.isAllPlayersReady()) {
-                    console.log("NOT REDAY: " + player.name);
+                    this.condLog("NOT REDAY: " + player.name);
                     player.sendGameEvent({
                         event: "requestFailed",
                         code: -1,
@@ -282,11 +322,25 @@ class BigTwoGame extends Game {
                 this.waitAllPlayersReady();
 
                 if (req.event === "turn") {
+                    if (!player.aiMode) {
+                        this.condLog("=========================== REAL PLAYER");
+                    } else {
+                        this.condLog("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX AI");
+                    }
                     var cards = this.fc.jsonToCards(req.cards);
+
+                    var turnDeck = this.fc.cardsToDeck(cards);
+
                     var deck = this.playerDecks[player.id];
 
-                    if (!this.isCardsInDeck(deck, cards)) {
-                        console.log("No such cards");
+                    this.condLog("deck:");
+                    this.condLog(deck);
+
+                    this.condLog("turnDeck:");
+                    this.condLog(turnDeck);
+
+                    if (!this.isCardsInDeck(deck, turnDeck)) {
+                        this.condLog("No such cards");
                         player.sendGameEvent({
                             event: "turnFailed",
                             code: -1,
@@ -295,10 +349,10 @@ class BigTwoGame extends Game {
                         return;
                     }
 
-                    var combination = makeCombination(cards);
+                    var combination = makeCombination(turnDeck);
 
                     if (!combination) {
-                        console.log("invaldi turn combin");
+                        this.condLog("invaldi turn combin");
                         player.sendGameEvent({
                             event: "turnFailed",
                             code: -2,
@@ -309,7 +363,7 @@ class BigTwoGame extends Game {
 
                     if (!this.lastCombination) {
                         var d3Found = false;
-                        for (var card of cards) {
+                        for (var card of turnDeck) {
                             if (card.suit === "diamonds" && card.rank === "3") {
                                 d3Found = true;
                                 break;
@@ -317,7 +371,7 @@ class BigTwoGame extends Game {
                         }
 
                         if (!d3Found) {
-                            console.log("must include a diamond-3");
+                            this.condLog("must include a diamond-3");
                             player.sendGameEvent({
                                 event: "turnFailed",
                                 code: -3,
@@ -327,7 +381,7 @@ class BigTwoGame extends Game {
                         }
                     } else if (this.lastPlayer.id !== player.id) {
                         if (combination.combinationName !== this.lastCombination.combinationName) {
-                            console.log("type not same");
+                            this.condLog("type not same");
                             player.sendGameEvent({
                                 event: "turnFailed",
                                 code: -5,
@@ -339,7 +393,7 @@ class BigTwoGame extends Game {
                         var compare = combination.compare(this.lastCombination);
 
                         if (compare <= 0) {
-                            console.log("last comb not big");
+                            this.condLog("last comb not big");
                             player.sendGameEvent({
                                 event: "turnFailed",
                                 code: -6,
@@ -349,8 +403,8 @@ class BigTwoGame extends Game {
                         }
                     }
 
-                    if (!this.removeCardsFromDeck(deck, cards)) {
-                        console.log("remove unsuccess");
+                    if (!this.removeCardsFromDeck(deck, turnDeck)) {
+                        this.condLog("remove unsuccess");
                         player.sendGameEvent({
                             event: "turnFailed",
                             code: -7,
@@ -359,7 +413,7 @@ class BigTwoGame extends Game {
                         return;
                     }
 
-                    this.updateDeck(player, deck);
+                    this.updateDeck(player, cards);
 
                     this.lastPlayer = player;
                     this.lastCombination = combination;
@@ -391,9 +445,9 @@ class BigTwoGame extends Game {
     }
 
     aiLogic(player) {
-        console.log("Excuting ai request");
+        //this.condLog("Excuting ai request");
         var deck = this.playerDecks[player.id];
-        console.log(deck);
+        //this.condLog(deck);
 
         var reqCombName = false;
 
@@ -410,9 +464,10 @@ class BigTwoGame extends Game {
             if (!this.lastCombination || (this.lastPlayer && this.lastPlayer.id === player.id)) {
                 return {
                     event: "turn",
-                    cards: [
-                        deck[0]
-                    ]
+                    cards: [{
+                        index: 0,
+                        card: deck[0]
+                    }]
                 };
             }
 
@@ -423,7 +478,10 @@ class BigTwoGame extends Game {
             for (i = 0; i < deck.length; i++) {
                 card = deck[i];
                 if (card.compare(lastCard) > 0) {
-                    selectedCard = card;
+                    selectedCard = {
+                        index: i,
+                        card: card
+                    };
                     break;
                 }
             }
@@ -436,7 +494,7 @@ class BigTwoGame extends Game {
                     ]
                 };
             } else {
-                console.log("No singles");
+                this.condLog("No singles");
                 return {
                     event: "pass"
                 };
@@ -450,12 +508,12 @@ class BigTwoGame extends Game {
                 };
             }
 
-            var selectedComb = this.findMatchLargerThanCombination(matches, this.lastCombination);
+            var selectedMatch = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
-            if (selectedComb) {
+            if (selectedMatch) {
                 return {
                     event: "turn",
-                    cards: selectedComb.cards
+                    cards: selectedMatch
                 }
             } else {
                 return {
@@ -465,7 +523,7 @@ class BigTwoGame extends Game {
         } else {
             var startIndex = Sizes.FIVE_CARD_HANDS.indexOf(this.lastCombination.fiveCardName);
             var i;
-            var selectedComb;
+            var selectedMatch;
             var matches;
             for (i = startIndex; i < Sizes.FIVE_CARD_HANDS.length; i++) {
                 matches = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
@@ -476,12 +534,12 @@ class BigTwoGame extends Game {
                     };
                 }
 
-                selectedComb = this.findMatchLargerThanCombination(matches, this.lastCombination);
+                selectedMatch = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
-                if (selectedComb) {
+                if (selectedMatch) {
                     return {
                         event: "turn",
-                        cards: selectedComb.cards
+                        cards: selectedMatch
                     }
                 }
             }
@@ -493,16 +551,16 @@ class BigTwoGame extends Game {
     }
 
     findMatchLargerThanCombination(matches, combination) {
-        var selectedComb = false;
+        var selectedMatch = false;
         var i;
         var comb;
         for (i = 0; i < matches.length; i++) {
             comb = makeCombination(this.fc.cardsToDeck(matches[i]));
             if (comb.compare(combination) > 0) {
-                selectedComb = comb;
+                selectedMatch = matches[i];
             }
         }
-        return selectedComb;
+        return selectedMatch;
     }
 
     onAi(player) {
