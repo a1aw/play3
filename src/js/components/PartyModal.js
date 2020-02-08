@@ -25,8 +25,8 @@ export default function (props) {
             <tr key={id}>
                 <td>{i + 1}</td>
                 <td><span className={partyPlayers[i].online ? "" : "text-secondary"}>{id === admin.id ? "👑 " : ""}{partyPlayers[i]["name"]} {partyPlayers[i].aiMode ? "(AI)" : ""} {props.gameInitReadyList[id] || !partyPlayers[i].online ? (props.playerReadyList[id] ? "✔️" : "") : <Spinner animation="border" role="status" size="sm"></Spinner>}</span></td>
-                <td>{id !== admin.id && props.client.player.id === admin.id && <Button variant="danger" onClick={() => {
-                    props.client.kickPlayer(id);
+                <td>{id !== admin.id && props.client.player.id === admin.id && <Button data-player-id={id} variant="danger" onClick={(evt) => {
+                    props.client.kickPlayer(evt.target.getAttribute("data-player-id"));
                 }}>Kick</Button>}</td>
             </tr>
         );

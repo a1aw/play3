@@ -1,10 +1,12 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {
+    //origins: "https:///www.playplayplay.ml:*"
     origins: "*:*"
 });
 var Party = require("./party");
 var Player = require("./player");
+var pjson = require("../../../package.json");
 
 server.listen(7692, () => {
     console.log("Now listening at port 7692.");
@@ -25,6 +27,14 @@ app.get('/*', function (req, res) {
 });
 
 io.on('connection', function (socket) {
+    socket.on("server", (data) => {
+        if (data.event === "info") {
+            socket.emit("server", {
+                event: "info",
+                version: pjson.version
+            });
+        }
+    });
     socket.on("game", (data) => {
         if (!data.partyId || !data.playerId || !data.token) {
             return;
@@ -181,7 +191,7 @@ io.on('connection', function (socket) {
             }
 
             if (data.event === "addAi") {
-                if (data.playerName !== "") {
+                if (data.playerName && data.playerName !== "") {
                     var player = new Player(getRandomMixedLetters(24), data.playerName, getRandomMixedLetters(64), false);
                     player.online = false;
                     player.aiMode = true;

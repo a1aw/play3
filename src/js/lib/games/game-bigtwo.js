@@ -407,7 +407,7 @@ class BigTwoGame extends Game {
         var avaCombs = this.fc.findAll(deck);
 
         if (reqCombName === "single") {
-            if (!this.lastCombination) {
+            if (!this.lastCombination || (this.lastPlayer && this.lastPlayer.id === player.id)) {
                 return {
                     event: "turn",
                     cards: [
@@ -421,7 +421,7 @@ class BigTwoGame extends Game {
             var i;
             var card;
             for (i = 0; i < deck.length; i++) {
-                card = deck[0];
+                card = deck[i];
                 if (card.compare(lastCard) > 0) {
                     selectedCard = card;
                     break;
@@ -436,6 +436,7 @@ class BigTwoGame extends Game {
                     ]
                 };
             } else {
+                console.log("No singles");
                 return {
                     event: "pass"
                 };
@@ -449,6 +450,7 @@ class BigTwoGame extends Game {
                 };
             }
 
+            var selectedComb = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
             if (selectedComb) {
                 return {

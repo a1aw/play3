@@ -7,14 +7,33 @@ export default class Client {
         this.player = false;
         this.party = false;
         this.token = false;
+        this.ready = false;
+        this.versionMatch = false;
+        this.serverVersion = false;
         this.gameInitReadyList = {};
         this.playerReadyList = {};
         this.listeners = {};
+        this.pendingRequests = [];
         this.initializeSocket();
     }
 
     initializeSocket() {
         this.socket = io(this.endPoint);
+        this.socket.on("server", (data) => {
+            if (data.event === "info") {
+                this.serverVersion = data.version;
+                if (data.version !== VERSION) {
+                    this.askRefreshPage();
+                } else {
+                    this.versionMatch = true;
+                    while (this.pendingRequests.length > 0) {
+                        var req = this.pendingRequests.shift();
+                        this.socketEmit(req.event, req.data);
+                    }
+                }
+                this.ready = true;
+            }
+        });
         this.socket.on("party", (data) => {
             console.log(data);
             if (data.event === "partyJoined") {
@@ -41,6 +60,9 @@ export default class Client {
         });
         this.socket.on("chat", (data) => {
             this.dispatch("chat", data);
+        });
+        this.forceSocketEmit("server", {
+            event: "info"
         });
     }
 
@@ -77,8 +99,29 @@ export default class Client {
         }
     }
 
-    socketEmit(event, data) {
+    askRefreshPage() {
+        if (confirm("Your client version (" + VERSION + ") does not match with the server's version (" + this.serverVersion + "). This is probably due to a pending update for the app. Do you want to refresh the page and try again?")) {
+            window.location = window.location.origin + "/?" + Date.now();
+        }
+    }
+
+    forceSocketEmit(event, data) {
         this.socket.emit(event, data);
+    }
+
+    socketEmit(event, data) {
+        if (!this.ready) {
+            this.pendingRequests.push({
+                event: event,
+                data: data
+            });
+        } else {
+            if (!this.versionMatch) {
+                this.askRefreshPage();
+                return;
+            }
+            this.forceSocketEmit(event, data);
+        }
     }
 
     addAi(playerName) {
