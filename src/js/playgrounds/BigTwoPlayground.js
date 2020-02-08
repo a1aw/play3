@@ -674,7 +674,7 @@ export default class BigTwoPlayground extends Playground {
         return (
             <div className="board" id="playingcards-board">
                 <div className="playingcards" id="cards-container">
-                    <BigTwoGameOverModal show={this.state.displayWinner} winner={this.state.winner.name} onHide={() => { this.setState({ displayWinner: false }) }} />
+                    <BigTwoGameOverModal show={this.state.displayWinner} winner={this.state.winner && this.state.winner.name} onHide={() => { this.setState({ displayWinner: false }) }} />
                     {this.state.displayWaitingPlayers &&
                         <div className="waiting-players align-items-center justify-items-center">
                             Waiting other players...
