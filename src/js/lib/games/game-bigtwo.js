@@ -455,7 +455,7 @@ class BigTwoGame extends Game {
             if (selectedComb) {
                 return {
                     event: "turn",
-                    cards: this.fc.cardsToDeck(selectedComb.cards)
+                    cards: selectedComb.cards
                 }
             } else {
                 return {
