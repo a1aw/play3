@@ -5,6 +5,8 @@ var Combination = require("./bigtwo/combination");
 var FindCombinations = require("./bigtwo/findCombinations");
 var makeCombination = require("./bigtwo/makeCombination");
 
+const PLAYER_TIMER = 15000;
+
 class BigTwoGame extends Game {
 
     constructor(party) {
@@ -150,6 +152,7 @@ class BigTwoGame extends Game {
 
     disable() {
         clearTimeout(this.timeout);
+        clearTimeout(this.playerTimeout);
     }
 
     isCardsInDeck(deck, cards) {
@@ -232,9 +235,18 @@ class BigTwoGame extends Game {
     }
 
     broadcastGameReady() {
+        clearTimeout(this.playerTimeout);
+        var serverTime = Date.now();
+
         this.party.broadcastGameEvent({
-            event: "gameReady"
+            event: "gameReady",
+            serverTime: serverTime,
+            timeout: PLAYER_TIMER
         });
+
+        setTimeout(() => {
+            this.request(this.turnPlayer, this.onAi(this.turnPlayer));
+        }, PLAYER_TIMER);
 
         this.processAwaitAiRequests();
     }
@@ -277,6 +289,7 @@ class BigTwoGame extends Game {
                     return;
                 }
 
+                clearTimeout(this.playerTimeout);
                 this.waitAllPlayersReady();
 
                 if (req.event === "turn") {
