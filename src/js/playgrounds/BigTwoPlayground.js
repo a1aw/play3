@@ -117,8 +117,8 @@ export default class BigTwoPlayground extends Playground {
 
                 this.timeout = setTimeout(() => {
                     this.endGame();
-                }, 8000);
-            }, 2000);
+                }, 7000);
+            }, 3000);
         } else if (resp.event && resp.event.endsWith("Failed")) {
             alert("Code: " + resp.code + "\nError: " + resp.msg);
         }
@@ -674,7 +674,7 @@ export default class BigTwoPlayground extends Playground {
         return (
             <div className="board" id="playingcards-board">
                 <div className="playingcards" id="cards-container">
-                    <BigTwoGameOverModal show={this.state.displayWinner} winner={this.state.winner} onHide={() => { this.setState({ displayWinner: false }) }} />
+                    <BigTwoGameOverModal show={this.state.displayWinner} winner={this.state.winner.name} onHide={() => { this.setState({ displayWinner: false }) }} />
                     {this.state.displayWaitingPlayers &&
                         <div className="waiting-players align-items-center justify-items-center">
                             Waiting other players...
