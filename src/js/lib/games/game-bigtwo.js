@@ -244,7 +244,7 @@ class BigTwoGame extends Game {
             timeout: PLAYER_TIMER
         });
 
-        setTimeout(() => {
+        this.playerTimeout = setTimeout(() => {
             this.request(this.turnPlayer, this.onAi(this.turnPlayer));
         }, PLAYER_TIMER);
 

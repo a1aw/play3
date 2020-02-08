@@ -46,35 +46,34 @@ export default class BigTwoPlayground extends Playground {
     }
 
     moveTimer() {
-        console.log("Timer started");
-        clearInterval(this.playerTimer);
-
         var turnPlayer = this.getTurnPlayer();
         var loc = this.playerCardsMap[turnPlayer.id];
         var el = document.getElementById("player-timer");
 
-        el.transition = "all 0.5s ease-in-out";
         if (loc === "left-cards") {
-            el.style.transform = "translate(-15.1em, -3.5em)";
+            el.style.transform = "translate(-11.975em, -4.5em)";
         } else if (loc === "right-cards") {
-            el.style.transform = "translate(14.1em, -3.5em)";
+            el.style.transform = "translate(10.975em, -4.5em)";
         } else if (loc === "top-cards") {
             el.style.transform = "translate(-0.5em, -3.5em)";
         } else if (loc === "bottom-cards") {
-            el.style.transform = "translate(-0.5em, -1em)";
+            el.style.transform = "translate(-0.5em, -2em)";
         }
     }
 
     startTimer() {
+        console.log("Timer started");
+        clearInterval(this.playerTimer);
         this.playerTimer = setInterval(() => {
             var remain = Math.round((this.targetPlayerTimeout - Date.now()) / 1000.0);
-            console.log("remain: " + remain);
             if (remain <= 0) {
                 this.setState({
                     displayTurnButtons: false
                 });
                 console.log("Cleared");
                 remain = 0;
+            } else {
+                console.log("remain: " + remain);
             }
             this.setState({
                 remainTime: remain
@@ -112,6 +111,7 @@ export default class BigTwoPlayground extends Playground {
         } else if (resp.event === "gameReady") {
             this.moveTimer();
             this.setState({
+                displayTurnButtons: false,
                 displayWaitingPlayers: false
             });
             if (this.isMyTurn()) {
@@ -122,7 +122,7 @@ export default class BigTwoPlayground extends Playground {
                 });
             }
             var serverTimeDiff = Date.now() - resp.serverTime;
-            this.targetPlayerTimeout = resp.serverTime + resp.timeout + serverTimeDiff;
+            this.targetPlayerTimeout = resp.serverTime + resp.timeout - serverTimeDiff;
         } else if (resp.event === "lastCards") {
             this.setState({
                 passBtnDisabled: false
@@ -157,6 +157,7 @@ export default class BigTwoPlayground extends Playground {
             }
 
             this.setState({
+                displayTimer: false,
                 winner: resp.winner
             });
 
