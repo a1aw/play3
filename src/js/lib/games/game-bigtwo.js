@@ -5,7 +5,7 @@ var Combination = require("./bigtwo/combination");
 var FindCombinations = require("./bigtwo/findCombinations");
 var makeCombination = require("./bigtwo/makeCombination");
 
-const PLAYER_TIMER = 15000;
+const PLAYER_TIMER = 20000;
 
 class BigTwoGame extends Game {
 
