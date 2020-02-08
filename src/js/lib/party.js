@@ -141,6 +141,14 @@ class Party {
                 player.online = false;
                 player.aiMode = true;
                 this.broadcastPlayerChanged(player);
+
+                if (!this.game &&
+                    this.game.isGameStarted() &&
+                    !this.game.isGameOver() &&
+                    this.game.getTurnPlayer() &&
+                    this.game.getTurnPlayer().id === player.id) {
+                    this.game.request(player, this.game.onAi(player));
+                }
             } else {
                 //Remove player
                 var index = -1;

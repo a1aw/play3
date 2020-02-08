@@ -42,6 +42,10 @@ class Game {
         player.sendGameEvent(resp);
     }
 
+    getTurnPlayer() {
+        return this.turnPlayer;
+    }
+
     isNewPlayersAllowed() {
         return false;
     }

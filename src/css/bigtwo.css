@@ -90,6 +90,17 @@
     white-space: nowrap;
 }
 
+#player-timer {
+    position: absolute;
+    left: -0.5em;
+    top: -0.5em;
+    padding: 0.25em;
+    font-size: 3rem;
+    z-index: 54;
+    white-space: nowrap;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
 .left-player-passed {
     position: absolute;
     left: -12em;
