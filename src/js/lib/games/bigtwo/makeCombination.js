@@ -12,8 +12,6 @@ module.exports = function (cards) {
     } else {
         var result = fc.findAll(cards);
 
-        console.log(result);
-
         var i;
         var key;
         combinationName = false;

@@ -275,11 +275,23 @@ class FindCombinations {
         return deck;
     }
     
-    jsonToCards(deck) {
+    jsonToDeck(json) {
         var out = [];
         var i;
-        for (i = 0; i < deck.length; i++) {
-            out.push(new Card(deck[i].suit, deck[i].rank))
+        for (i = 0; i < json.length; i++) {
+            out.push(new Card(json[i].suit, json[i].rank))
+        }
+        return out;
+    }
+
+    jsonToCards(json) {
+        var out = [];
+        var i;
+        for (i = 0; i < json.length; i++) {
+            out.push({
+                index: json[i].index,
+                card: new Card(json[i].card.suit, json[i].card.rank)
+            })
         }
         return out;
     }
