@@ -45,7 +45,7 @@ export default class BigTwoPlayground extends Playground {
         document.getElementById("playingcards-board").style.transform = "scale(" + calc + ", " + calc + ")";
     }
 
-    startTimer() {
+    moveTimer() {
         console.log("Timer started");
         clearInterval(this.playerTimer);
 
@@ -63,7 +63,9 @@ export default class BigTwoPlayground extends Playground {
         } else if (loc === "bottom-cards") {
             el.style.transform = "translate(-0.5em, -1em)";
         }
-        
+    }
+
+    startTimer() {
         this.playerTimer = setInterval(() => {
             var remain = Math.round((this.targetPlayerTimeout - Date.now()) / 1000.0);
             console.log("remain: " + remain);
@@ -72,7 +74,6 @@ export default class BigTwoPlayground extends Playground {
                     displayTurnButtons: false
                 });
                 console.log("Cleared");
-                clearInterval(this.playerTimer);
                 remain = 0;
             }
             this.setState({
@@ -109,6 +110,7 @@ export default class BigTwoPlayground extends Playground {
             this.numberOfCards = resp.numberOfCards;
             this.updateNumberOfCards();
         } else if (resp.event === "gameReady") {
+            this.moveTimer();
             this.setState({
                 displayWaitingPlayers: false
             });
@@ -121,12 +123,10 @@ export default class BigTwoPlayground extends Playground {
             }
             var serverTimeDiff = Date.now() - resp.serverTime;
             this.targetPlayerTimeout = resp.serverTime + resp.timeout + serverTimeDiff;
-            this.startTimer();
         } else if (resp.event === "lastCards") {
             this.setState({
                 passBtnDisabled: false
             });
-            this.stopTimer();
 
             this.lastPlayer = resp.player;
             
@@ -312,6 +312,8 @@ export default class BigTwoPlayground extends Playground {
         this.setState({
             passBtnDisabled: true
         });
+        this.targetPlayerTimeout = 0;
+        this.startTimer();
     };
 
     updateNumberOfCards() {
