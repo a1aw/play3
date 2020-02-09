@@ -50,7 +50,18 @@ export default class Client {
             } else if (this.party && data.event === "gameChanged") {
                 this.party.gameId = data.gameId;
             } else if (this.party && data.event === "playerChanged") {
-                console.warn("Handle player changed");
+                var oldPlayer = false;
+                var i;
+                for (i = 0; i < this.party.players.length; i++) {
+                    if (this.party.players[i].id === data.player.id) {
+                        oldPlayer = this.party.players[i];
+                        break;
+                    }
+                }
+                if (oldPlayer) {
+                    oldPlayer.online = data.player.online;
+                    oldPlayer.aiMode = data.player.aiMode;
+                }
             } else if (this.party && data.event === "adminChanged") {
                 this.party.admin = data.admin;
             }
@@ -123,6 +134,15 @@ export default class Client {
             }
             this.forceSocketEmit(event, data);
         }
+    }
+
+    sendMessage(msg) {
+        this.socketEmit("chat", {
+            token: this.token,
+            playerId: this.player.id,
+            partyId: this.party.partyId,
+            msg: msg
+        });
     }
 
     addAi(playerName) {

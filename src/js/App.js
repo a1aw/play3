@@ -45,6 +45,7 @@ class App extends React.Component {
         this.startGame = this.startGame.bind(this);
         this.joinGame = this.joinGame.bind(this);
         this.onJoinNicknameClicked = this.onJoinNicknameClicked.bind(this);
+        this.onSendMsg = this.onSendMsg.bind(this);
         this.listen();
     }
 
@@ -113,6 +114,22 @@ class App extends React.Component {
                     return;
                 }
                 alert("Code: " + data.code + "\nError: " + data.msg);
+            }
+        });
+        this.client.on("chat", (data) => {
+            if (!this.state.partyModalShow) {
+                return;
+            }
+
+            console.log("App Chat");
+            console.log(data);
+
+            if (data.event === "chat") {
+                var chatList = document.getElementById("party-modal-chat");
+                var el = document.createElement("p");
+                el.innerHTML = "<b>" + data.player.name + ":</b> " + data.msg;
+                el.classList.add("chat-message");
+                chatList.prepend(el);
             }
         });
     }
@@ -210,6 +227,14 @@ class App extends React.Component {
         */
     }
 
+    onSendMsg() {
+        var msg = document.getElementById("your-message-field").value;
+        if (!msg || msg === "") {
+            return;
+        }
+        this.client.sendMessage(msg);
+    }
+
     render() {
         return (
             <div>
@@ -224,7 +249,7 @@ class App extends React.Component {
                 }
                 {
                     this.state.partyModalShow &&
-                    <PartyModal show={this.state.partyModalShow} onHide={() => this.setState({ partyModalShow: false })} client={this.client} playerReadyList={this.state.playerReadyList} gameInitReadyList={this.state.gameInitReadyList} party={this.state.party} player={this.client.player} playgroundBootDone={this.state.playgroundBootDone} />
+                    <PartyModal show={this.state.partyModalShow} onHide={() => this.setState({ partyModalShow: false })} client={this.client} playerReadyList={this.state.playerReadyList} gameInitReadyList={this.state.gameInitReadyList} party={this.state.party} player={this.client.player} playgroundBootDone={this.state.playgroundBootDone} onSendMsg={this.onSendMsg} />
                 }
             </div>
         );

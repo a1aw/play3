@@ -5,12 +5,64 @@ body {
     background-color: rgb(229, 229, 229)
 }
 
+.chat-btn {
+    margin: 4px;
+    position: fixed;
+    bottom: 4px;
+    right: 4px;
+    opacity: 0.4;
+}
+
+.chat-btn:hover {
+    opacity: 1;
+}
+
 .party-list {
     margin: 4px;
-    position: absolute;
+    position: fixed;
     top: 4px;
     right: 4px;
     text-align: right;
+    opacity: 0.4;
+}
+
+.party-list:hover {
+    opacity: 1;
+}
+
+#party-modal-chat {
+    text-align: left;
+}
+
+#chat-list {
+    margin: 4px;
+    position: fixed;
+    top: 4px;
+    left: 4px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.chat-message {
+    opacity: 1;
+    animation-name: chat-message-display;
+    animation-delay: 5s;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+    margin-bottom: 0px;
+}
+
+.chat-message:hover {
+    animation-name: unset;
+}
+
+@keyframes chat-message-display {
+    from { opacity: 1 }
+    to {
+        opacity: 0;
+        visibility: hidden;
+        height: 0;
+    }
 }
 
 .hori-scroll {

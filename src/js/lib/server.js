@@ -82,6 +82,50 @@ io.on('connection', function (socket) {
 
         party.game.request(player, data.request);
     });
+    socket.on("chat", (data) => {
+        if (!data.partyId || !data.playerId || !data.token || !data.msg || data.msg === "" || data.msg.length >= 128) {
+            return;
+        }
+
+        if (!parties[data.partyId]) {
+            socket.emit("party", {
+                event: data.event + "Failed",
+                code: -1,
+                msg: "No such party."
+            });
+            return;
+        }
+
+        var party = parties[data.partyId];
+
+        var player = party.getPlayerById(data.playerId);
+
+        if (!player) {
+            socket.emit("party", {
+                event: data.event + "Failed",
+                code: -2,
+                msg: "Player does not exist."
+            });
+            return;
+        }
+
+        if (player.token !== data.token || player.client.id !== socket.id) {
+            socket.emit("party", {
+                event: data.event + "Failed",
+                code: -3,
+                msg: "Authorization failed."
+            });
+            return;
+        }
+
+        var msg = data.msg.trim();
+
+        party.broadcastChatEvent({
+            event: "chat",
+            player: player.getDescriptor(),
+            msg: msg
+        });
+    });
     socket.on("party", (data) => {
         if (data.event === "create") {
             if (!data.gameId || !data.playerName) {
