@@ -1,9 +1,12 @@
-﻿// JavaScript source code
+﻿    // JavaScript source code
 import React from 'react';
 import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
 import GameModal from './components/GameModal';
 import PartyModal from './components/PartyModal'
+import JoinNicknameModal from './components/JoinNicknameModal';
+import JoiningPartyModal from './components/JoiningPartyModal';
+import ConnectingModal from './components/ConnectingModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';
@@ -32,7 +35,8 @@ class App extends React.Component {
 
         this.client = new Client(endPoint);
         this.state = {
-            gameModalShow: true,
+            connectingModalShow: true,
+            gameModalShow: false,
             partyModalShow: false,
             playground: false,
             gameInitReadyList: false,
@@ -40,22 +44,39 @@ class App extends React.Component {
         };
         this.startGame = this.startGame.bind(this);
         this.joinGame = this.joinGame.bind(this);
+        this.onJoinNicknameClicked = this.onJoinNicknameClicked.bind(this);
         this.listen();
     }
 
-    componentDidMount() {
-        if (window.location.search && window.location.search.length === 7) {
-            var name = prompt("Enter your nickname:");
-
-            this.client.joinParty(name, window.location.search.substring(1, 7));
-
-            this.setState({
-                gameModalShow: false
-            });
-        }
+    onJoinNicknameClicked() {
+        var nickName = document.getElementById("join-nickname-field").value;
+        this.client.joinParty(nickName, this.state.joinPartyId);
+        this.setState({
+            joinNicknameModalShow: false,
+            joiningPartyModalShow: true,
+            creatingParty: false
+        });
     }
 
     listen() {
+        this.client.on("__ready", () => {
+            this.setState({
+                connectingModalShow: false
+            });
+            if (window.location.search && window.location.search.length === 7) {
+                var partyId = window.location.search.substring(1, 7);
+
+                this.setState({
+                    joinNicknameModalShow: true,
+                    joinPartyId: partyId
+                });
+            } else {
+                this.setState({
+                    gameModalShow: true,
+                    connectingModalShow: false
+                });
+            }
+        });
         this.client.on("party", (data) => {
             this.setState({
                 party: this.client.party
@@ -81,7 +102,7 @@ class App extends React.Component {
                     });
                 } else {
                     this.setState({
-                        gameModalShow: false,
+                        joiningPartyModalShow: false,
                         partyModalShow: true
                     });
                     this.updatePlayground();
@@ -143,9 +164,11 @@ class App extends React.Component {
         }
 
         this.client.joinParty(nickName, partyId);
-
+        
         this.setState({
-            gameModalShow: false
+            gameModalShow: false,
+            joiningPartyModalShow: true,
+            creatingParty: false
         });
     }
 
@@ -163,9 +186,11 @@ class App extends React.Component {
         }
 
         this.client.createParty(nickName, gameId);
-
+        
         this.setState({
-            gameModalShow: false
+            gameModalShow: false,
+            joiningPartyModalShow: true,
+            creatingParty: true
         });
         /*
         this.setState({
@@ -189,7 +214,14 @@ class App extends React.Component {
         return (
             <div>
                 {this.state.playground}
+                <ConnectingModal show={this.state.connectingModalShow} />
                 <GameModal show={this.state.gameModalShow} onHide={() => this.setState({ gameModalShow: false })} startGame={this.startGame} joinGame={this.joinGame} />
+                {this.state.joiningPartyModalShow &&
+                    <JoiningPartyModal show={this.state.joiningPartyModalShow} create={this.state.creatingParty} partyId={this.state.joinPartyId} />
+                }
+                {this.state.joinNicknameModalShow &&
+                    <JoinNicknameModal show={this.state.joinNicknameModalShow} partyId={this.state.joinPartyId} onJoin={this.onJoinNicknameClicked} />
+                }
                 {
                     this.state.partyModalShow &&
                     <PartyModal show={this.state.partyModalShow} onHide={() => this.setState({ partyModalShow: false })} client={this.client} playerReadyList={this.state.playerReadyList} gameInitReadyList={this.state.gameInitReadyList} party={this.state.party} player={this.client.player} playgroundBootDone={this.state.playgroundBootDone} />
