@@ -28,10 +28,11 @@ export default class Client {
                     this.versionMatch = true;
                     while (this.pendingRequests.length > 0) {
                         var req = this.pendingRequests.shift();
-                        this.socketEmit(req.event, req.data);
+                        this.forceSocketEmit(req.event, req.data);
                     }
                 }
                 this.ready = true;
+                this.dispatch("__ready");
             }
         });
         this.socket.on("party", (data) => {

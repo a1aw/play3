@@ -21,7 +21,6 @@ export default class BigTwoPlayground extends Playground {
         this.setState({
             loading: false
         });
-        this.bootDone();
         window.addEventListener("resize", this.resizeEventListener = () => {
             this.resizeBoard();
         });
@@ -31,6 +30,24 @@ export default class BigTwoPlayground extends Playground {
         this.resizeBoard();
         this.deck = false;
         this.spreadCardsDone = false;
+        this.preloadAllImages();
+    }
+
+    preloadAllImages() {
+        var context = require.context('../../img/playingcards/', false, /\.svg$/);
+        var proms = [];
+        var keys = context.keys();
+        for (var key of keys) {
+            proms.push(new Promise((resolve, reject) => {
+                var img = new Image();
+                img.src = context(key).default;
+                img.onload = resolve;
+            }));
+        }
+        Promise.all(proms).then(() => {
+            console.log("done");
+            this.bootDone();
+        });
     }
 
     disable() {
