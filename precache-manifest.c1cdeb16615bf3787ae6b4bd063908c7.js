@@ -1,14 +1,215 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
+    "url": "00b5eed0e617c1754f2a002d8d000504.svg"
+  },
+  {
+    "url": "02d4f21be9842c36046fc2a4028582b6.svg"
+  },
+  {
+    "url": "037d8c2373b81694a9519c060d0951a3.svg"
+  },
+  {
+    "url": "09112d05f5b3dfbaffae8d0775e5a012.svg"
+  },
+  {
+    "url": "0f60db3e415d45116eed712a4c8e3082.svg"
+  },
+  {
+    "url": "12408f645f540e569f639eec07b24140.svg"
+  },
+  {
+    "url": "13bea5a1b85d4f6fcff7f22da3fe9c7f.svg"
+  },
+  {
+    "url": "1b2188a05b3339ac8f1c043c803d5d9a.svg"
+  },
+  {
+    "url": "1ba0f353a1a7c70c82de47cd244654ad.svg"
+  },
+  {
+    "url": "223cd5d84ac18a7ede8a88e69be01b3b.svg"
+  },
+  {
+    "url": "252a0b897b0e463e06692d17b233782b.svg"
+  },
+  {
+    "url": "3708c7e5593573328d639c71e58d7090.svg"
+  },
+  {
+    "url": "3963b09b32d71eaf3904864d36a7e9f6.svg"
+  },
+  {
+    "url": "3a5059d0b4687cf3b0442ace92e47e88.svg"
+  },
+  {
+    "url": "410715a5861724c910fd56336e5bef76.svg"
+  },
+  {
+    "url": "4281c3d1982ca4e277ae289a56f7fda1.svg"
+  },
+  {
+    "url": "43122a93411b55fddce09a2562828e2c.svg"
+  },
+  {
+    "url": "46304258451a3d2c69fdfaa1ac51d00e.svg"
+  },
+  {
+    "url": "471f3e5977ae8e34350702a5354b4dd3.svg"
+  },
+  {
+    "url": "474283132c4129834526713217a2f99c.svg"
+  },
+  {
+    "url": "4ff481d5b35c16c2777c8338cbbe4757.svg"
+  },
+  {
+    "url": "51aa35bf8fa6e3aa60e8215d642e4f83.svg"
+  },
+  {
+    "url": "55a0952df2d2ac118fe526cc4cd234e4.svg"
+  },
+  {
+    "url": "56c4541c77e2d646ff22ceaf382a6e3e.svg"
+  },
+  {
+    "url": "58d77ea50fe2f88b1fbef0c67bd533ed.svg"
+  },
+  {
+    "url": "5f81e3253ead056953d4eb2006a1543f.svg"
+  },
+  {
+    "url": "6369d1c9530222380e3755d3dff0cd92.svg"
+  },
+  {
+    "url": "658998b13b66f8ea8c419eb4a2720ebd.svg"
+  },
+  {
+    "url": "669c20fcb83ddabc3bda3e8162af6569.svg"
+  },
+  {
+    "url": "68cb8d2e2b84ce75a5ccb773db45a4cc.svg"
+  },
+  {
+    "url": "71f253368c37179079e9ebfa66604bb3.svg"
+  },
+  {
+    "url": "72d20001e3f712d041f5c98c0e36d73d.svg"
+  },
+  {
+    "url": "768d16acc808234b01ab27b85e8129c2.svg"
+  },
+  {
+    "url": "7a78a2cb4befd4707c0824b9e6f32ece.svg"
+  },
+  {
+    "url": "7ce690e9a5d9fd4b323dcf7d6b988d3c.svg"
+  },
+  {
+    "url": "856386ef24764a8b1b200611f9468ece.svg"
+  },
+  {
+    "url": "8f300fb5cd9845334b705d3dbdb9e86a.svg"
+  },
+  {
+    "url": "91a4ffb4bd6e8bde6a10ca9973175cbd.svg"
+  },
+  {
+    "url": "94b4a5b0b35e4db0d7587815dcdcdb91.svg"
+  },
+  {
+    "url": "9ee19a01f3b58dbf7d41bdc0eedf853b.svg"
+  },
+  {
+    "url": "9f9f91e23aa62ef1e9e68f22a70e683c.svg"
+  },
+  {
     "revision": "5af15c8a2d54c61149d8693a1be2ddcf",
     "url": "CNAME"
   },
   {
-    "revision": "47a9ac6262eb87581f08",
-    "url": "app.5c30ec996a1f79ea8358.js"
+    "url": "a1f0114e1433a3a96ffa10c622d1b2a5.svg"
+  },
+  {
+    "url": "a578d7b2d3c0912a5296ec854fdec2b1.svg"
+  },
+  {
+    "url": "a8aabd2da27a433782343dbbe7f4e0f4.svg"
+  },
+  {
+    "revision": "da5ba9b9089b1b282cb8",
+    "url": "app.169d1da42ec9ae658ea7.js"
+  },
+  {
+    "url": "b02355d1d506cee70ce1caea2e54ee4c.svg"
+  },
+  {
+    "url": "b821dcd9a79616c0f95f935af2d623eb.svg"
+  },
+  {
+    "url": "b8357abbdcf523d8c3adf4f6f43602db.svg"
+  },
+  {
+    "url": "b9d5e12f600e3e441e26a2f460ace236.svg"
+  },
+  {
+    "url": "b9f81c2d91ad1ec3e349b5cc012ea516.svg"
+  },
+  {
+    "url": "c38f31dcf6ccf50fffd429a3baa53c30.svg"
+  },
+  {
+    "url": "c439a88183651c5b9a63d9807dd7ca7d.svg"
+  },
+  {
+    "url": "c63394108a986db8e02c9d2226007af8.svg"
+  },
+  {
+    "url": "cdc326c08c278e49d397fa439845ac96.svg"
+  },
+  {
+    "url": "cf6317bc33f1c6db87c7f41b05e0276a.svg"
+  },
+  {
+    "url": "d00ed5bcb5b70ef0aee9566bedea6077.svg"
+  },
+  {
+    "url": "dbb3850c770e43af9bc90d0cce873dbb.svg"
+  },
+  {
+    "url": "dd29ca5aa8ac92ff0c506fc350b52f57.svg"
+  },
+  {
+    "url": "dd4d7167babf09261b89c5b882dce59f.svg"
+  },
+  {
+    "url": "dfb7b9c5da090e753693a0648e230423.svg"
+  },
+  {
+    "url": "e1ae315267bebee9e8b70bb2e1ec27d8.svg"
+  },
+  {
+    "url": "e94802c7d82c79f1c96937e522e17f27.svg"
+  },
+  {
+    "url": "eaef1133f7cafc9f07a5dd8002d58f67.svg"
+  },
+  {
+    "url": "eda011102b5e3ed00502425e250a6e14.svg"
+  },
+  {
+    "url": "f63258336d8695aaade082ed26d0b17c.svg"
   },
   {
     "url": "f956b6d85f78462ab4adc75933f408cb.svg"
+  },
+  {
+    "url": "fc3e13abd4977e8ab014cfcddf5709c2.svg"
+  },
+  {
+    "url": "fe66fe030637c0b3bbef055a2494c064.svg"
+  },
+  {
+    "url": "ff456a8035cfd447c7e461623c53789b.svg"
   },
   {
     "revision": "669c20fcb83ddabc3bda3e8162af6569",
@@ -283,7 +484,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "img/playingcards/red_joker.svg"
   },
   {
-    "revision": "2d5f9e2301ba69c453c940bddad7ccd8",
+    "revision": "9447cc1444347a594eae4bf7142293e0",
     "url": "index.html"
   },
   {
@@ -291,7 +492,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "runtime.a950ea390abb4de90b86.js"
   },
   {
-    "revision": "7b6a39e61822c2fc841a",
-    "url": "vendors.8d91b544511c7f64484c.js"
+    "revision": "3ba99a12bbc742d4b553",
+    "url": "vendors.98475ad786eba1821add.js"
   }
 ]);
