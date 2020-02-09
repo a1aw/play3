@@ -135,6 +135,21 @@ export default function (props) {
                         props.client.addAi(playerName);
                     }} block><i className="fas fa-plus"></i> Add computer (AI)</Button>
                 }
+                <hr />
+                <InputGroup className="mb-3">
+                    <FormControl
+                        id="your-message-field"
+                        placeholder="Your message"
+                        aria-label="Your message"
+                        aria-describedby="your-message-addon"
+                    />
+                    <InputGroup.Append>
+                        <Button variant="success" onClick={props.onSendMsg}>Send</Button>
+                    </InputGroup.Append>
+                </InputGroup>
+                <hr />
+                <div id="party-modal-chat">
+                </div>
             </Modal.Body>
             <Modal.Footer>
                 <p>Application licensed under the GPLv3 Public License.</p>

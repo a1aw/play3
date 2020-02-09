@@ -2,7 +2,7 @@
 import SetupLocalPlayersModal from './SetupLocalPlayersModal';
 import PassToPlayerModal from './PassToPlayerModal';
 import SelectKeypadKeyboardModal from './SelectKeypadKeyboardModal';
-import { Spinner } from 'react-bootstrap';
+import { Spinner, Button } from 'react-bootstrap';
 import io from 'socket.io-client';
 
 export default class Playground extends React.Component {
@@ -26,10 +26,30 @@ export default class Playground extends React.Component {
         this.props.client.on("game", this.gameEventListener = (data) => {
             this.response(data);
         });
+        this.props.client.on("chat", this.chatEventListener = (data) => {
+            console.log("CHAT");
+            console.log(data);
+            if (data.event === "chat") {
+                var chatList = document.getElementById("chat-list");
+                var el = document.createElement("span");
+                el.innerHTML = "<b>" + data.player.name + ":</b> " + data.msg;
+                el.classList.add("chat-message");
+                chatList.prepend(el);
+            }
+        });
+        this.onChatClicked = this.onChatClicked.bind(this);
     }
 
     bootDone() {
         this.props.onBootDone();
+    }
+
+    onChatClicked() {
+        var msg = prompt("Your message:");
+        if (!msg || msg === "") {
+            return;
+        }
+        this.props.client.sendMessage(msg);
     }
 
     request(req) {
@@ -48,6 +68,7 @@ export default class Playground extends React.Component {
     unregisterEventListener() {
         this.props.client.off("game", this.gameEventListener);
         this.props.client.off("party", this.partyEventListener);
+        this.props.client.off("chat", this.chatEventListener);
     }
 
     componentDidMount() {
@@ -119,7 +140,7 @@ export default class Playground extends React.Component {
         var playersList = [];
         var i;
         for (i = 0; i < partyPlayers.length; i++) {
-            playersList.push(<div key={partyPlayers[i].id}><span className={this.props.client.player.id === partyPlayers[i].id ? "font-weight-bold" : ""}>{(this.state.turnPlayer && this.state.turnPlayer.id === partyPlayers[i].id) ? "➡️ " : ""}{partyPlayers[i].name}</span><br /></div>);
+            playersList.push(<div key={partyPlayers[i].id}><span className={(this.props.client.player.id === partyPlayers[i].id ? "font-weight-bold" : "") + (partyPlayers[i].online ? "" : " text-secondary")}>{(this.state.turnPlayer && this.state.turnPlayer.id === partyPlayers[i].id) ? "➡️ " : ""}{partyPlayers[i].aiMode ? "(AI) " : ""}{partyPlayers[i].name}</span><br /></div>);
         }
         return (
             <div className="container-fluid playground">
@@ -156,6 +177,10 @@ export default class Playground extends React.Component {
                         {playersList}
                     </div>
                 }
+                <div id="chat-list">
+
+                </div>
+                <Button variant="secondary" className="chat-btn" onClick={this.onChatClicked}><i className="far fa-comments"></i></Button>
             </div>
         );
     }
