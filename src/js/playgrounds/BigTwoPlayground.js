@@ -142,11 +142,11 @@ export default class BigTwoPlayground extends Playground {
             this.targetPlayerTimeout = resp.serverTime + resp.timeout - serverTimeDiff;
         } else if (resp.event === "lastCards") {
             this.setState({
-                passBtnDisabled: false
+                passBtnDisabled: resp.player.id === this.props.client.player.id
             });
 
             this.lastPlayer = resp.player;
-            
+
             this.setPassed(resp.player, false);
 
             var cards = this.fc.jsonToDeck(resp.cards);
@@ -162,6 +162,16 @@ export default class BigTwoPlayground extends Playground {
             this.setPassed(resp.player, true);
             this.removePlayerLastCards(resp.player);
             this.sendGameReady();
+        } else if (resp.event === "roundHint") {
+            var hint = resp.hint;
+            if (hint.event === "turn") {
+                this.unselectAllCards();
+                this.selectCards(hint.cards);
+            } else if (hint.event === "pass") {
+                if (confirm("The hint asks you to pass. Do you want to pass?")) {
+                    this.sendPass();
+                }
+            }
         } else if (resp.event === "gameOver") {
             var decks = resp.playerDecks;
             var loc;
@@ -620,7 +630,10 @@ export default class BigTwoPlayground extends Playground {
         }
 
         var match = matches[this.lastSelectCombinationCount];
+        this.selectCards(match);
+    }
 
+    selectCards(match) {
         var cardEl;
         for (var matchCard of match) {
             cardEl = this.findCardElement(matchCard.index);
@@ -793,7 +806,7 @@ export default class BigTwoPlayground extends Playground {
                         <div className="turn-buttons">
                             <ButtonGroup>
                                 <Button variant="primary" id="pass-btn" onClick={this.onPassBtnClicked}><i className="fas fa-forward" disabled={this.state.passBtnDisabled}></i> Pass</Button>
-                                <Button variant="warning" id="hint-btn" disabled={true}><i className="far fa-lightbulb"></i> Hint</Button>
+                                <Button variant="warning" id="hint-btn"><i className="far fa-lightbulb"></i> Hint</Button>
                                 <Button variant="success" id="submit-btn" onClick={this.onSubmitBtnClicked}><i className="fas fa-check"></i> Submit</Button>
                             </ButtonGroup>
                         </div>

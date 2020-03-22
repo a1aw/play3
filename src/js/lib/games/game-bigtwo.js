@@ -393,6 +393,12 @@ class BigTwoGame extends Game {
                     });
                     this.broadcastLastPassed(player);
                     this.cardNextTurn();
+                } else if (req.event === "hint") {
+                    var resp = this.aiLogic(player);
+                    player.sendGameEvent({
+                        event: "roundHint",
+                        hint: resp
+                    });
                 }
             }
         }
