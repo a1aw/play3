@@ -398,31 +398,59 @@ class BigTwoGame extends Game {
         }
     }
 
+    containsLastCard(deck, comb) {
+        var i;
+        for (i = 0; i < comb.length; i++) {
+            if (comb[i].index === deck.length - 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     aiLogic(player) {
         var deck = this.playerDecks[player.id];
 
         var reqCombName = false;
 
+        var avaCombs = this.fc.findAll(deck);
+
         if (this.lastCombination && this.lastPlayer && this.lastPlayer.id !== player.id) {
             reqCombName = this.lastCombination.combinationName;
         } else {
-            //TODO game logic
-            reqCombName = "single";
-        }
+            var i;
+            var j;
+            var combs;
+            for (i = Sizes.ALL_COMBINATIONS.length - 1; i >= 0; i--) {
+                combs = avaCombs[Sizes.ALL_COMBINATIONS[i]];
 
-        var avaCombs = this.fc.findAll(deck);
+                if (combs.length === 0) {
+                    continue;
+                }
 
-        if (reqCombName === "single") {
-            if (!this.lastCombination || (this.lastPlayer && this.lastPlayer.id === player.id)) {
-                return {
-                    event: "turn",
-                    cards: [{
-                        index: 0,
-                        card: deck[0]
-                    }]
-                };
+                for (j = 0; j < combs.length; j++) {
+                    if (this.containsLastCard(deck, combs[j])) {
+                        continue;
+                    } else {
+                        //TODO process to avoid other combinations
+                        return {
+                            event: "turn",
+                            cards: combs[j]
+                        };
+                    }
+                }
             }
 
+            return {
+                event: "turn",
+                cards: [{
+                    index: 0,
+                    card: deck[0]
+                }]
+            };
+        }
+
+        if (reqCombName === "single") {
             var lastCard = this.lastCombination.cards[0];
             var selectedCard = false;
             var i;
