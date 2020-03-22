@@ -14,6 +14,7 @@ export default class BigTwoPlayground extends Playground {
         super(props, "bigtwo");
         this.fc = new FindCombinations();
         this.onPassBtnClicked = this.onPassBtnClicked.bind(this);
+        this.onHintBtnClicked = this.onHintBtnClicked.bind(this);
         this.onSubmitBtnClicked = this.onSubmitBtnClicked.bind(this);
     }
 
@@ -674,6 +675,12 @@ export default class BigTwoPlayground extends Playground {
         this.sendPass();
     }
 
+    onHintBtnClicked() {
+        this.request({
+            event: "hint"
+        });
+    }
+
     onSubmitBtnClicked() {
         this.setState({
             displayTurnButtons: false
@@ -806,7 +813,7 @@ export default class BigTwoPlayground extends Playground {
                         <div className="turn-buttons">
                             <ButtonGroup>
                                 <Button variant="primary" id="pass-btn" onClick={this.onPassBtnClicked}><i className="fas fa-forward" disabled={this.state.passBtnDisabled}></i> Pass</Button>
-                                <Button variant="warning" id="hint-btn"><i className="far fa-lightbulb"></i> Hint</Button>
+                                <Button variant="warning" id="hint-btn" onClick={this.onHintBtnClicked}><i className="far fa-lightbulb"></i> Hint</Button>
                                 <Button variant="success" id="submit-btn" onClick={this.onSubmitBtnClicked}><i className="fas fa-check"></i> Submit</Button>
                             </ButtonGroup>
                         </div>
