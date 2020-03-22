@@ -418,20 +418,35 @@ class BigTwoGame extends Game {
         if (this.lastCombination && this.lastPlayer && this.lastPlayer.id !== player.id) {
             reqCombName = this.lastCombination.combinationName;
         } else {
+            if (!this.lastCombination && !this.lastPlayer) {
+                return {
+                    event: "turn",
+                    cards: [{
+                        index: 0,
+                        card: deck[0]
+                    }]
+                };
+            }
+
             var i;
             var j;
             var combs;
             for (i = Sizes.ALL_COMBINATIONS.length - 1; i >= 0; i--) {
+                console.log("CHecking comination: " + Sizes.ALL_COMBINATIONS[i]);
                 combs = avaCombs[Sizes.ALL_COMBINATIONS[i]];
 
                 if (combs.length === 0) {
+                    console.log("Empty");
                     continue;
                 }
 
                 for (j = 0; j < combs.length; j++) {
                     if (this.containsLastCard(deck, combs[j])) {
+                        console.log("Contains last card, skipping");
                         continue;
                     } else {
+                        console.log("Returning");
+                        console.log(combs[j]);
                         //TODO process to avoid other combinations
                         return {
                             event: "turn",
@@ -441,6 +456,7 @@ class BigTwoGame extends Game {
                 }
             }
 
+            console.log("None card");
             return {
                 event: "turn",
                 cards: [{
