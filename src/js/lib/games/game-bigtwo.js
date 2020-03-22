@@ -289,116 +289,118 @@ class BigTwoGame extends Game {
                     return;
                 }
 
-                clearTimeout(this.playerTimeout);
-                this.waitAllPlayersReady();
-
-                if (req.event === "turn") {
-                    var cards = this.fc.jsonToCards(req.cards);
-
-                    var turnDeck = this.fc.cardsToDeck(cards);
-
-                    var deck = this.playerDecks[player.id];
-
-                    if (!this.isCardsInDeck(deck, turnDeck)) {
-                        player.sendGameEvent({
-                            event: "turnFailed",
-                            code: -1,
-                            msg: "You do not have such cards in deck."
-                        });
-                        return;
-                    }
-
-                    var combination = makeCombination(turnDeck);
-
-                    if (!combination) {
-                        player.sendGameEvent({
-                            event: "turnFailed",
-                            code: -2,
-                            msg: "Invalid turn cards combination."
-                        });
-                        return;
-                    }
-
-                    if (!this.lastCombination) {
-                        var d3Found = false;
-                        for (var card of turnDeck) {
-                            if (card.suit === "diamonds" && card.rank === "3") {
-                                d3Found = true;
-                                break;
-                            }
-                        }
-
-                        if (!d3Found) {
-                            player.sendGameEvent({
-                                event: "turnFailed",
-                                code: -3,
-                                msg: "The first turn cards must include a Diamond-3 card."
-                            });
-                            return;
-                        }
-                    } else if (this.lastPlayer.id !== player.id) {
-                        if (combination.combinationName !== this.lastCombination.combinationName) {
-                            player.sendGameEvent({
-                                event: "turnFailed",
-                                code: -5,
-                                msg: "The card combination type has to be the same as the last combination."
-                            });
-                            return;
-                        }
-
-                        var compare = combination.compare(this.lastCombination);
-
-                        if (compare <= 0) {
-                            player.sendGameEvent({
-                                event: "turnFailed",
-                                code: -6,
-                                msg: "The card combination has to be bigger than the last combination."
-                            });
-                            return;
-                        }
-                    }
-
-                    if (!this.removeCardsFromDeck(deck, turnDeck)) {
-                        player.sendGameEvent({
-                            event: "turnFailed",
-                            code: -7,
-                            msg: "Cards removal unsuccessful."
-                        });
-                        return;
-                    }
-
-                    this.updateDeck(player, cards);
-
-                    this.lastPlayer = player;
-                    this.lastCombination = combination;
-
-                    this.broadcastLastCards();
-                    this.broadcastNumberOfCards();
-
-                    player.sendGameEvent({
-                        event: "turnSuccess"
-                    });
-
-                    if (deck.length === 0) {
-                        this.gameOver = true;
-                        this.broadcastGameOver();
-                        this.endGame();
-                    } else {
-                        this.cardNextTurn();
-                    }
-                    return;
-                } else if (req.event === "pass") {
-                    player.sendGameEvent({
-                        event: "passSuccess"
-                    });
-                    this.broadcastLastPassed(player);
-                    this.cardNextTurn();
-                } else if (req.event === "hint") {
+                if (req.event === "hint") {
                     var resp = this.aiLogic(player);
                     player.sendGameEvent({
                         event: "roundHint",
                         hint: resp
                     });
+                } else if (req.event === "turn" || req.event === "pass") {
+                    clearTimeout(this.playerTimeout);
+                    this.waitAllPlayersReady();
+
+                    if (req.event === "turn") {
+                        var cards = this.fc.jsonToCards(req.cards);
+
+                        var turnDeck = this.fc.cardsToDeck(cards);
+
+                        var deck = this.playerDecks[player.id];
+
+                        if (!this.isCardsInDeck(deck, turnDeck)) {
+                            player.sendGameEvent({
+                                event: "turnFailed",
+                                code: -1,
+                                msg: "You do not have such cards in deck."
+                            });
+                            return;
+                        }
+
+                        var combination = makeCombination(turnDeck);
+
+                        if (!combination) {
+                            player.sendGameEvent({
+                                event: "turnFailed",
+                                code: -2,
+                                msg: "Invalid turn cards combination."
+                            });
+                            return;
+                        }
+
+                        if (!this.lastCombination) {
+                            var d3Found = false;
+                            for (var card of turnDeck) {
+                                if (card.suit === "diamonds" && card.rank === "3") {
+                                    d3Found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!d3Found) {
+                                player.sendGameEvent({
+                                    event: "turnFailed",
+                                    code: -3,
+                                    msg: "The first turn cards must include a Diamond-3 card."
+                                });
+                                return;
+                            }
+                        } else if (this.lastPlayer.id !== player.id) {
+                            if (combination.combinationName !== this.lastCombination.combinationName) {
+                                player.sendGameEvent({
+                                    event: "turnFailed",
+                                    code: -5,
+                                    msg: "The card combination type has to be the same as the last combination."
+                                });
+                                return;
+                            }
+
+                            var compare = combination.compare(this.lastCombination);
+
+                            if (compare <= 0) {
+                                player.sendGameEvent({
+                                    event: "turnFailed",
+                                    code: -6,
+                                    msg: "The card combination has to be bigger than the last combination."
+                                });
+                                return;
+                            }
+                        }
+
+                        if (!this.removeCardsFromDeck(deck, turnDeck)) {
+                            player.sendGameEvent({
+                                event: "turnFailed",
+                                code: -7,
+                                msg: "Cards removal unsuccessful."
+                            });
+                            return;
+                        }
+
+                        this.updateDeck(player, cards);
+
+                        this.lastPlayer = player;
+                        this.lastCombination = combination;
+
+                        this.broadcastLastCards();
+                        this.broadcastNumberOfCards();
+
+                        player.sendGameEvent({
+                            event: "turnSuccess"
+                        });
+
+                        if (deck.length === 0) {
+                            this.gameOver = true;
+                            this.broadcastGameOver();
+                            this.endGame();
+                        } else {
+                            this.cardNextTurn();
+                        }
+                        return;
+                    } else if (req.event === "pass") {
+                        player.sendGameEvent({
+                            event: "passSuccess"
+                        });
+                        this.broadcastLastPassed(player);
+                        this.cardNextTurn();
+                    }
                 }
             }
         }
