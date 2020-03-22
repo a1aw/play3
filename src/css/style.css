@@ -84,10 +84,6 @@ body {
 }
 
 @media only screen and (max-width: 768px) {
-    nav {
-        margin-top: env(safe-area-inset-top);
-    }
-
     .party-list {
         margin-top: env(safe-area-inset-top);
     }
