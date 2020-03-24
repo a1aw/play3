@@ -9,7 +9,7 @@ const PLAYER_TIMER = 20000;
 
 const LAST_CARD_LIMIT = 8;
 const LAST_FIVE_CARD_HANDS_LIMIT = 9;
-const DUP_SCORE_LIMIT = 0.625;
+const DUP_SCORE_LIMIT = 0.5;
 
 class BigTwoGame extends Game {
 
@@ -479,10 +479,10 @@ class BigTwoGame extends Game {
                         hasNoDupComb = true;
                     }
                 }
-                dupScore += hasNoDupComb ? 0 : (i + 1);
+                dupScore += hasNoDupComb ? 0 : 1;
             }
 
-            total += (i + 1);
+            total += 1;//(i + 1);
         }
         console.log("DupScore: " + dupScore + " / " + total + "=" + (dupScore / total))
         return dupScore / total;
