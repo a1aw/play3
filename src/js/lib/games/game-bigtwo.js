@@ -416,6 +416,16 @@ class BigTwoGame extends Game {
         return false;
     }
 
+    getAverageRemainingCards() {
+        var count = 0;
+        var decks = 0;
+        for (var key in this.playerDecks) {
+            count += this.playerDecks[key].length;
+            decks++;
+        }
+        return Math.round(count / decks);
+    }
+
     aiLogic(player) {
         var deck = this.playerDecks[player.id];
 
@@ -476,6 +486,9 @@ class BigTwoGame extends Game {
             for (i = 0; i < deck.length; i++) {
                 card = deck[i];
                 if (card.compare(lastCard) > 0) {
+                    if (i === deck.length - 1 && this.getAverageRemainingCards > 7) {
+                        break;
+                    }
                     selectedCard = {
                         index: i,
                         card: card
@@ -508,6 +521,13 @@ class BigTwoGame extends Game {
             var selectedMatch = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
             if (selectedMatch) {
+                if (this.containsLastCard(deck, selectedMatch) &&
+                    this.getAverageRemainingCards > 7) {
+                    return {
+                        event: "pass"
+                    };
+                }
+
                 return {
                     event: "turn",
                     cards: selectedMatch
@@ -534,6 +554,11 @@ class BigTwoGame extends Game {
                 selectedMatch = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
                 if (selectedMatch) {
+                    if (this.containsLastCard(deck, selectedMatch) &&
+                        this.getAverageRemainingCards > 7) {
+                        continue;
+                    }
+
                     return {
                         event: "turn",
                         cards: selectedMatch

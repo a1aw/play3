@@ -33,10 +33,10 @@ class Combination {
             throw new Error("The two combinations' length/types are not the same. They cannot be compared.");
             //return false;
         }
-
-        if (this.cards.length === 5 && combination.cards.length === 5) {
-            var thisIndex = Sizes.FIVE_CARD_HANDS.indexOf(this.combinationName);
-            var combinationIndex = Sizes.FIVE_CARD_HANDS.indexOf(combination.combinationName);
+        
+        if (this.combinationName === "fiveCardHands" && this.cards.length === 5) {
+            var thisIndex = Sizes.FIVE_CARD_HANDS.indexOf(this.fiveCardName);
+            var combinationIndex = Sizes.FIVE_CARD_HANDS.indexOf(combination.fiveCardName);
 
             if (thisIndex < combinationIndex) {
                 return -1;
