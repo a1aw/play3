@@ -136,8 +136,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "a8aabd2da27a433782343dbbe7f4e0f4.svg"
   },
   {
-    "revision": "d8b3a61f1a987c33ee89",
-    "url": "app.8acaa221cab8be805f02.js"
+    "revision": "a755c718a0c68d19989a",
+    "url": "app.f3816ef36f7be629f57f.js"
   },
   {
     "url": "b02355d1d506cee70ce1caea2e54ee4c.svg"
@@ -484,7 +484,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "img/playingcards/red_joker.svg"
   },
   {
-    "revision": "dc96eb09c44d9dc1c7cc3745c3e0cf9f",
+    "revision": "737be9838c29f82488303c0784984fc5",
     "url": "index.html"
   },
   {
@@ -492,7 +492,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "runtime.a950ea390abb4de90b86.js"
   },
   {
-    "revision": "3ba99a12bbc742d4b553",
-    "url": "vendors.98475ad786eba1821add.js"
+    "revision": "be80f5deb07b93e01f07",
+    "url": "vendors.bd8fb44bc5171c91d33b.js"
   }
 ]);
