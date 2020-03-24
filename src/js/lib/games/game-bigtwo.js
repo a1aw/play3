@@ -9,7 +9,7 @@ const PLAYER_TIMER = 20000;
 
 const LAST_CARD_LIMIT = 8;
 const LAST_FIVE_CARD_HANDS_LIMIT = 9;
-const DUP_SCORE_LIMIT = 0.85;
+const DUP_SCORE_LIMIT = 0.625;
 
 class BigTwoGame extends Game {
 
@@ -464,7 +464,7 @@ class BigTwoGame extends Game {
             combs = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
 
             if (combs.length > 0) {
-                hasNoDupComb = true;
+                hasNoDupComb = false;
                 for (j = 0; j < combs.length; j++) {
                     comb = combs[j];
                     dup = false;
