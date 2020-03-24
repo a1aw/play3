@@ -39,7 +39,6 @@ export default function (props) {
             </Modal.Header>
             <Modal.Body>
                 <p>The winner is <b>{props.winner.name}</b>. You will be redirected back to the party dialog very soon.</p>
-                <hr />
                 <Table>
                     <thead>
                         <tr>
