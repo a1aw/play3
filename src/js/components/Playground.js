@@ -31,13 +31,13 @@ export default class Playground extends React.Component {
             console.log(data);
             if (data.event === "chat") {
                 var chatList = document.getElementById("chat-list");
-                var el = document.createElement("span");
+                var el = document.createElement("p");
                 el.innerHTML = "<b>" + data.player.name + ":</b> " + data.msg;
                 el.classList.add("chat-message");
                 chatList.prepend(el);
             }
         });
-        this.aiModeEnabled = false;
+        this.selfAiMode = false;
         this.onAiModeClicked = this.onAiModeClicked.bind(this);
         this.onChatClicked = this.onChatClicked.bind(this);
     }
@@ -47,7 +47,7 @@ export default class Playground extends React.Component {
     }
 
     onAiModeClicked() {
-        this.props.client.aiMode(!this.aiModeEnabled);
+        this.props.client.aiMode(!this.selfAiMode);
     }
 
     onChatClicked() {
@@ -146,13 +146,11 @@ export default class Playground extends React.Component {
         var partyPlayers = this.props.party.players;
         var playersList = [];
         var i;
-        var aiModeBtnVariant = "secondary";
         for (i = 0; i < partyPlayers.length; i++) {
-            if (myPlayerId === partyPlayers[i].id && partyPlayers[i].aiMode) {
-                aiModeBtnVariant = "success";
-                this.aiModeEnabled = true;
+            if (myPlayerId === partyPlayers[i].id) {
+                this.selfAiMode = partyPlayers[i].aiMode;
             }
-            playersList.push(<div key={partyPlayers[i].id}><p className={(myPlayerId === partyPlayers[i].id ? "font-weight-bold" : "") + (partyPlayers[i].online ? "" : " text-secondary")}>{(this.state.turnPlayer && this.state.turnPlayer.id === partyPlayers[i].id) ? "➡️ " : ""}{partyPlayers[i].aiMode ? "(AI) " : ""}{partyPlayers[i].name}</p><br /></div>);
+            playersList.push(<div key={partyPlayers[i].id}><span className={(myPlayerId === partyPlayers[i].id ? "font-weight-bold" : "") + (partyPlayers[i].online ? "" : " text-secondary")}>{(this.state.turnPlayer && this.state.turnPlayer.id === partyPlayers[i].id) ? "➡️ " : ""}{partyPlayers[i].aiMode ? "(AI) " : ""}{partyPlayers[i].name}</span><br /></div>);
         }
         return (
             <div className="container-fluid playground">
@@ -192,7 +190,7 @@ export default class Playground extends React.Component {
                 <div id="chat-list">
 
                 </div>
-                <Button variant={aiModeBtnVariant} className="ai-mode-btn" onClick={this.onAiModeClicked}><i className="fas fa-robot"></i> AI</Button>
+                <Button variant={this.selfAiMode ? "success" : "secondary"} className="ai-mode-btn" style={this.selfAiMode ? {opacity: 1} : {}} onClick={this.onAiModeClicked}><i className="fas fa-robot"></i> AI</Button>
                 <Button variant="secondary" className="chat-btn" onClick={this.onChatClicked}><i className="far fa-comments"></i></Button>
             </div>
         );
