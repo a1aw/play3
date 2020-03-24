@@ -198,7 +198,7 @@ io.on('connection', function (socket) {
                 });
                 return;
             }
-        } else if (data.event === "gameInitReady" || data.event === "playerReady" || data.event === "playerUnready" || data.event === "startGame" || data.event === "addAi" || data.event === "kickPlayer") {
+        } else if (data.event === "gameInitReady" || data.event === "playerReady" || data.event === "playerUnready" || data.event === "startGame" || data.event === "addAi" || data.event === "kickPlayer" || data.event === "aiMode") {
             if (!data.partyId || !data.playerId || !data.token) {
                 return;
             }
@@ -226,10 +226,31 @@ io.on('connection', function (socket) {
             }
 
             if (player.token !== data.token || player.client.id !== socket.id) {
+                var x = player.token !== data.token ? 1 : 0;
+                var y = player.client.id !== socket.id ? 2 : 0;
                 socket.emit("party", {
                     event: data.event + "Failed",
                     code: -3,
-                    msg: "Authorization failed."
+                    msg: "Authorization failed. (" + (x + y) + ")"
+                });
+                return;
+            }
+
+            if (data.event === "aiMode" && typeof data.enable === "boolean") {
+                player.aiMode = data.enable;
+                party.broadcastPlayerChanged(player);
+                socket.emit("party", {
+                    event: data.event + "Success",
+                    msg: "AI mode is now " + data.enable ? "enabled" : "disabled" + "."
+                });
+                return;
+            }
+
+            if (party.game.isGameStarted()) {
+                socket.emit("party", {
+                    event: data.event + "Failed",
+                    code: -5,
+                    msg: "The game has started."
                 });
                 return;
             }
@@ -252,18 +273,7 @@ io.on('connection', function (socket) {
                     });
                     return;
                 }
-            }
-
-            if (party.game.isGameStarted()) {
-                socket.emit("party", {
-                    event: data.event + "Failed",
-                    code: -5,
-                    msg: "The game has started."
-                });
-                return;
-            }
-
-            if (data.event === "gameInitReady") {
+            } else if (data.event === "gameInitReady") {
                 party.gameInitReady(player);
             } else if (data.event === "playerReady") {
                 party.playerReady(player);

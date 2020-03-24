@@ -145,6 +145,16 @@ export default class Client {
         });
     }
 
+    aiMode(enable) {
+        this.socketEmit("party", {
+            event: "aiMode",
+            token: this.token,
+            playerId: this.player.id,
+            partyId: this.party.partyId,
+            enable: enable
+        });
+    }
+
     addAi(playerName) {
         this.socketEmit("party", {
             event: "addAi",

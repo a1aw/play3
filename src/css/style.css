@@ -17,6 +17,18 @@ body {
     opacity: 1;
 }
 
+.ai-mode-btn {
+    margin: 4px;
+    position: fixed;
+    bottom: 4px;
+    left: 4px;
+    opacity: 0.4;
+}
+
+.ai-mode-btn:hover {
+    opacity: 1;
+}
+
 .party-list {
     margin: 4px;
     position: fixed;

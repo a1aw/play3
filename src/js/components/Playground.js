@@ -37,11 +37,17 @@ export default class Playground extends React.Component {
                 chatList.prepend(el);
             }
         });
+        this.aiModeEnabled = false;
+        this.onAiModeClicked = this.onAiModeClicked.bind(this);
         this.onChatClicked = this.onChatClicked.bind(this);
     }
 
     bootDone() {
         this.props.onBootDone();
+    }
+
+    onAiModeClicked() {
+        this.props.client.aiMode(!this.aiModeEnabled);
     }
 
     onChatClicked() {
@@ -136,11 +142,17 @@ export default class Playground extends React.Component {
     }
 
     render() {
+        var myPlayerId = this.props.client.player.id;
         var partyPlayers = this.props.party.players;
         var playersList = [];
         var i;
+        var aiModeBtnVariant = "secondary";
         for (i = 0; i < partyPlayers.length; i++) {
-            playersList.push(<div key={partyPlayers[i].id}><span className={(this.props.client.player.id === partyPlayers[i].id ? "font-weight-bold" : "") + (partyPlayers[i].online ? "" : " text-secondary")}>{(this.state.turnPlayer && this.state.turnPlayer.id === partyPlayers[i].id) ? "➡️ " : ""}{partyPlayers[i].aiMode ? "(AI) " : ""}{partyPlayers[i].name}</span><br /></div>);
+            if (myPlayerId === partyPlayers[i].id && partyPlayers[i].aiMode) {
+                aiModeBtnVariant = "success";
+                this.aiModeEnabled = true;
+            }
+            playersList.push(<div key={partyPlayers[i].id}><p className={(myPlayerId === partyPlayers[i].id ? "font-weight-bold" : "") + (partyPlayers[i].online ? "" : " text-secondary")}>{(this.state.turnPlayer && this.state.turnPlayer.id === partyPlayers[i].id) ? "➡️ " : ""}{partyPlayers[i].aiMode ? "(AI) " : ""}{partyPlayers[i].name}</p><br /></div>);
         }
         return (
             <div className="container-fluid playground">
@@ -180,6 +192,7 @@ export default class Playground extends React.Component {
                 <div id="chat-list">
 
                 </div>
+                <Button variant={aiModeBtnVariant} className="ai-mode-btn" onClick={this.onAiModeClicked}><i className="fas fa-robot"></i> AI</Button>
                 <Button variant="secondary" className="chat-btn" onClick={this.onChatClicked}><i className="far fa-comments"></i></Button>
             </div>
         );
