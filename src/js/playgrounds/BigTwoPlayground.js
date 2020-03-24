@@ -135,9 +135,13 @@ export default class BigTwoPlayground extends Playground {
             if (this.isMyTurn()) {
                 this.removePlayerLastCards(this.props.client.player);
                 this.setState({
-                    displayBottomPlayerPassed: false,
-                    displayTurnButtons: true
+                    displayBottomPlayerPassed: false
                 });
+                if (!this.selfAiMode) {
+                    this.setState({
+                        displayTurnButtons: true
+                    });
+                }
             }
             var serverTimeDiff = Date.now() - resp.serverTime;
             this.targetPlayerTimeout = resp.serverTime + resp.timeout - serverTimeDiff;
@@ -181,7 +185,7 @@ export default class BigTwoPlayground extends Playground {
                 player = this.getPlayerById(key);
                 if (key !== resp.winner.id) {
                     this.setPassed(player, false);
-                    this.removePlayerLastCards(this.lastPlayer);
+                    this.removePlayerLastCards(player);
                     this.showPlayerLastCards(player, decks[key], true);
                 }
             }
