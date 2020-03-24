@@ -232,6 +232,7 @@ class App extends React.Component {
         if (!msg || msg === "") {
             return;
         }
+        document.getElementById("your-message-field").value = "";
         this.client.sendMessage(msg);
     }
 
