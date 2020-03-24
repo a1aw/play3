@@ -462,22 +462,26 @@ class BigTwoGame extends Game {
         var dup;
         for (i = Sizes.FIVE_CARD_HANDS.length - 1; i >= 0; i--) {
             combs = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
-            hasNoDupComb = false;
-            for (j = 0; j < combs.length; j++) {
-                comb = combs[j];
-                dup = false;
-                for (x = 0; x < comb.length; x++) {
-                    if (indexes.includes(comb[x].index)) {
-                        dup = true;
-                        break;
+
+            if (combs.length > 0) {
+                hasNoDupComb = true;
+                for (j = 0; j < combs.length; j++) {
+                    comb = combs[j];
+                    dup = false;
+                    for (x = 0; x < comb.length; x++) {
+                        if (indexes.includes(comb[x].index)) {
+                            dup = true;
+                            break;
+                        }
+                    }
+
+                    if (!dup) {
+                        hasNoDupComb = true;
                     }
                 }
-
-                if (!dup) {
-                    hasNoDupComb = true;
-                }
+                dupScore += hasNoDupComb ? 0 : (i + 1);
             }
-            dupScore += hasNoDupComb ? 0 : (i + 1);
+
             total += (i + 1);
         }
         console.log("DupScore: " + dupScore + " / " + total + "=" + (dupScore / total))
