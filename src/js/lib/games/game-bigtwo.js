@@ -435,7 +435,9 @@ class BigTwoGame extends Game {
             count += this.playerDecks[key].length;
             decks++;
         }
-        return Math.round(count / decks);
+        var x = Math.round(count / decks);
+        console.log("AvgRemain: " + x);
+        return x;
     }
 
     aiLogic(player) {
@@ -469,7 +471,7 @@ class BigTwoGame extends Game {
                 }
 
                 for (j = 0; j < combs.length; j++) {
-                    if (this.containsLastCard(deck, combs[j]) && this.getAverageRemainingCards > 6) {
+                    if (this.containsLastCard(deck, combs[j]) && this.getAverageRemainingCards() > 6) {
                         continue;
                     } else {
                         //TODO process to avoid other combinations
@@ -508,7 +510,7 @@ class BigTwoGame extends Game {
 
             if (selectedCard) {
                 if (this.containsLastCard(deck, [selectedCard]) &&
-                    this.getAverageRemainingCards > 6) {
+                    this.getAverageRemainingCards() > 6) {
                     return {
                         event: "pass"
                     };
@@ -538,7 +540,7 @@ class BigTwoGame extends Game {
 
             if (selectedMatch) {
                 if (this.containsLastCard(deck, selectedMatch) &&
-                    this.getAverageRemainingCards > 6) {
+                    this.getAverageRemainingCards() > 6) {
                     return {
                         event: "pass"
                     };
@@ -571,7 +573,7 @@ class BigTwoGame extends Game {
 
                 if (selectedMatch) {
                     if (this.containsLastCard(deck, selectedMatch) &&
-                        this.getAverageRemainingCards > 6) {
+                        this.getAverageRemainingCards() > 6) {
                         continue;
                     }
 
