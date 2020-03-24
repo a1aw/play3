@@ -472,7 +472,7 @@ class BigTwoGame extends Game {
                     }
                 }
 
-                hasNoDupComb |= dup;
+                hasNoDupComb |= !dup;
             }
 
             dupScore += hasNoDupComb ? 0 : (i + 1);
