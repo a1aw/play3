@@ -227,10 +227,22 @@ class BigTwoGame extends Game {
     }
 
     broadcastGameOver() {
+        var array = [];
+        for (var key in this.playerDecks) {
+            array.push({
+                playerId: key,
+                length: this.playerDecks[key].length
+            });
+        }
+        array.sort((a, b) => {
+            return a.length - b.length;
+        });
         this.party.broadcastGameEvent({
             event: "gameOver",
             winner: this.lastPlayer.getDescriptor(),
-            playerDecks: this.playerDecks
+            lastCombination: this.lastCombination,
+            playerDecks: this.playerDecks,
+            ranking: array
         });
     }
 
@@ -457,7 +469,7 @@ class BigTwoGame extends Game {
                 }
 
                 for (j = 0; j < combs.length; j++) {
-                    if (this.containsLastCard(deck, combs[j])) {
+                    if (this.containsLastCard(deck, combs[j]) && this.getAverageRemainingCards > 6) {
                         continue;
                     } else {
                         //TODO process to avoid other combinations
@@ -486,9 +498,6 @@ class BigTwoGame extends Game {
             for (i = 0; i < deck.length; i++) {
                 card = deck[i];
                 if (card.compare(lastCard) > 0) {
-                    if (i === deck.length - 1 && this.getAverageRemainingCards > 7) {
-                        break;
-                    }
                     selectedCard = {
                         index: i,
                         card: card
@@ -498,6 +507,13 @@ class BigTwoGame extends Game {
             }
 
             if (selectedCard) {
+                if (this.containsLastCard(deck, [selectedCard]) &&
+                    this.getAverageRemainingCards > 6) {
+                    return {
+                        event: "pass"
+                    };
+                }
+
                 return {
                     event: "turn",
                     cards: [
@@ -522,7 +538,7 @@ class BigTwoGame extends Game {
 
             if (selectedMatch) {
                 if (this.containsLastCard(deck, selectedMatch) &&
-                    this.getAverageRemainingCards > 7) {
+                    this.getAverageRemainingCards > 6) {
                     return {
                         event: "pass"
                     };
@@ -555,7 +571,7 @@ class BigTwoGame extends Game {
 
                 if (selectedMatch) {
                     if (this.containsLastCard(deck, selectedMatch) &&
-                        this.getAverageRemainingCards > 7) {
+                        this.getAverageRemainingCards > 6) {
                         continue;
                     }
 

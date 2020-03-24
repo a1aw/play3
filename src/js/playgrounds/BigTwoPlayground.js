@@ -179,14 +179,17 @@ export default class BigTwoPlayground extends Playground {
             var player;
             for (var key in decks) {
                 player = this.getPlayerById(key);
-                this.setPassed(player, false);
-                this.removePlayerLastCards(this.lastPlayer);
-                this.showPlayerLastCards(player, decks[key], true);
+                if (key !== resp.winner.id) {
+                    this.setPassed(player, false);
+                    this.removePlayerLastCards(this.lastPlayer);
+                    this.showPlayerLastCards(player, decks[key], true);
+                }
             }
 
             this.setState({
                 displayTimer: false,
-                winner: resp.winner
+                winner: resp.winner,
+                ranking: resp.ranking
             });
 
             this.timeout = setTimeout(() => {
@@ -765,7 +768,9 @@ export default class BigTwoPlayground extends Playground {
         return (
             <div className="board" id="playingcards-board">
                 <div className="playingcards" id="cards-container">
-                    <BigTwoGameOverModal show={this.state.displayWinner} winner={this.state.winner && this.state.winner.name} onHide={() => { this.setState({ displayWinner: false }) }} />
+                    {this.state.displayWinner && 
+                        <BigTwoGameOverModal show={this.state.displayWinner} party={this.props.client.party} ranking={this.state.ranking} winner={this.state.winner} onHide={() => { this.setState({ displayWinner: false }) }} />
+                    }
                     {this.state.displayWaitingPlayers &&
                         <div className="waiting-players align-items-center justify-items-center">
                             Waiting other players...
