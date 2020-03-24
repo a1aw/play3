@@ -459,6 +459,8 @@ class BigTwoGame extends Game {
         var dupScore = 0;
         var hasNoDupComb;
         var dup;
+        console.log("Checking");
+        console.log(targetComb);
         for (i = Sizes.FIVE_CARD_HANDS.length - 1; i >= 0; i--) {
             combs = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
             hasNoDupComb = false;
@@ -472,9 +474,13 @@ class BigTwoGame extends Game {
                     }
                 }
 
+                console.log(comb);
+                console.log("Dup: " + dup);
                 hasNoDupComb |= !dup;
+                console.log("HasNoDupCOmb:" + hasNoDupComb);
             }
 
+            console.log("FinalHasNoDupCOmb:" + hasNoDupComb);
             dupScore += hasNoDupComb ? 0 : (i + 1);
             total += (i + 1);
         }
@@ -549,7 +555,7 @@ class BigTwoGame extends Game {
                         this.containsLastCard(deck, combs[j])) {
                         continue;
                     } else if (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                        this.isDuplicateFiveCardHands(avaCombs, combs[j]) > 0.75) {
+                        this.isDuplicateFiveCardHands(avaCombs, combs[j]) > 0.8) {
                         continue;
                     } else {
                         return {
@@ -590,7 +596,7 @@ class BigTwoGame extends Game {
                 if ((avgCards > LAST_CARD_LIMIT &&
                      this.containsLastCard(deck, [selectedCard])) ||
                     (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                        this.isDuplicateFiveCardHands(avaCombs, [selectedCard]) > 0.75)
+                        this.isDuplicateFiveCardHands(avaCombs, [selectedCard]) > 0.8)
                 ) {
                     return {
                         event: "pass"
@@ -624,7 +630,7 @@ class BigTwoGame extends Game {
                 if ((avgCards > LAST_CARD_LIMIT &&
                     this.containsLastCard(deck, selectedMatch)) ||
                     (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                        this.isDuplicateFiveCardHands(avaCombs, selectedMatch) > 0.75)
+                        this.isDuplicateFiveCardHands(avaCombs, selectedMatch) > 0.8)
                 ) {
                     return {
                         event: "pass"
@@ -661,7 +667,7 @@ class BigTwoGame extends Game {
                     if ((avgCards > LAST_CARD_LIMIT &&
                         this.containsLastCard(deck, selectedMatch)) ||
                         (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                            this.isDuplicateFiveCardHands(avaCombs, selectedMatch) > 0.75)
+                            this.isDuplicateFiveCardHands(avaCombs, selectedMatch) > 0.8)
                     ) {
                         return {
                             event: "pass"
