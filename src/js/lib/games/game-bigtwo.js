@@ -485,6 +485,11 @@ class BigTwoGame extends Game {
                 hasNoDupComb = false;
                 for (j = 0; j < combs.length; j++) {
                     comb = combs[j];
+					
+					if (comb.compare(targetComb) === 0){
+						hasNoDupComb = true;
+						break;
+					}
 
                     dup = false;
                     for (x = 0; x < comb.length; x++) {
@@ -570,9 +575,10 @@ class BigTwoGame extends Game {
                 }
 
                 for (j = 0; j < combs.length; j++) {
-                    if ((minCards > LAST_CARD_LIMIT &&
-                        this.containsLastCard(deck, combs[j])) ||
-                        this.isDuplicateOtherHands(avaCombs, combs[j])) {
+                    if (minCards > LAST_CARD_LIMIT &&
+                        this.containsLastCard(deck, combs[j])) {
+                        continue;
+                    } else if (this.isDuplicateOtherHands(avaCombs, combs[j])) {
                         continue;
                     } else {
                         return {
