@@ -461,6 +461,11 @@ class BigTwoGame extends Game {
         for (i = Sizes.FIVE_CARD_HANDS.length - 1; i >= 0; i--) {
             combs = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
 
+            if (Sizes.FIVE_CARD_HANDS[i] === "flush") {
+                //TODO: Skip handling by now
+                continue;
+            }
+
             if (combs.length > 0) {
                 hasNoDupComb = false;
                 for (j = 0; j < combs.length; j++) {
