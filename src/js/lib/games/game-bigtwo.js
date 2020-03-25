@@ -459,6 +459,7 @@ class BigTwoGame extends Game {
 
         var currMin = this.getMinimumRemainingCards();
         
+		var same;
         var hasNoDupComb;
         var dup;
         var key;
@@ -485,19 +486,24 @@ class BigTwoGame extends Game {
                 hasNoDupComb = false;
                 for (j = 0; j < combs.length; j++) {
                     comb = combs[j];
+
+					same = 0;
+                    dup = false;
+                    for (x = 0; x < comb.length; x++) {
+						if (targetComb.length === comb.length && comb[x].index === targetComb[x].index){
+							same++;
+						}
+						
+                        if (indexes.includes(comb[x].index)) {
+                            dup = true;
+                            //break;
+                        }
+                    }
 					
-					if (comb.compare(targetComb) === 0){
+					if (same === comb.length){
 						hasNoDupComb = true;
 						break;
 					}
-
-                    dup = false;
-                    for (x = 0; x < comb.length; x++) {
-                        if (indexes.includes(comb[x].index)) {
-                            dup = true;
-                            break;
-                        }
-                    }
 
                     if (!dup) {
                         hasNoDupComb = true;
