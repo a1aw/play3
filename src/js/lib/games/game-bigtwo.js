@@ -570,10 +570,9 @@ class BigTwoGame extends Game {
                 }
 
                 for (j = 0; j < combs.length; j++) {
-                    if (minCards > LAST_CARD_LIMIT &&
-                        this.containsLastCard(deck, combs[j])) {
-                        continue;
-                    } else if (this.isDuplicateOtherHands(avaCombs, combs[j])) {
+                    if ((minCards > LAST_CARD_LIMIT &&
+                        this.containsLastCard(deck, combs[j])) ||
+                        this.isDuplicateOtherHands(avaCombs, combs[j])) {
                         continue;
                     } else {
                         return {
@@ -613,7 +612,7 @@ class BigTwoGame extends Game {
                 var minCards = this.getMinimumRemainingCards();
                 if ((minCards > LAST_CARD_LIMIT &&
                      this.containsLastCard(deck, [selectedCard])) ||
-                    this.isDuplicateOtherHands(avaCombs, [selectedCard]))
+                    this.isDuplicateOtherHands(avaCombs, [selectedCard])
                 ) {
                     return {
                         event: "pass"
