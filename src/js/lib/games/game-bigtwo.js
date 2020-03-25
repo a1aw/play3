@@ -7,9 +7,9 @@ var makeCombination = require("./bigtwo/makeCombination");
 
 const PLAYER_TIMER = 20000;
 
-const LAST_CARD_LIMIT = 7;
-const SEPARATE_NORMAL_HANDS_LIMIT = 6;
-const SEPARATE_FIVE_CARD_HANDS_LIMIT = 8;
+const LAST_CARD_LIMIT = 6;
+const SEPARATE_NORMAL_HANDS_LIMIT = 5;
+const SEPARATE_FIVE_CARD_HANDS_LIMIT = 4;
 
 class BigTwoGame extends Game {
 
