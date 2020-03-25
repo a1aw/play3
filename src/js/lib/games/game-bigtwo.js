@@ -7,8 +7,8 @@ var makeCombination = require("./bigtwo/makeCombination");
 
 const PLAYER_TIMER = 20000;
 
-const LAST_CARD_LIMIT = 9;
-const LAST_FIVE_CARD_HANDS_LIMIT = 10;
+const LAST_CARD_LIMIT = 7;
+const LAST_FIVE_CARD_HANDS_LIMIT = 8;
 
 class BigTwoGame extends Game {
 
@@ -431,15 +431,16 @@ class BigTwoGame extends Game {
         return false;
     }
 
-    getAverageRemainingCards() {
-        var count = 0;
-        var decks = 0;
+    getMinimumRemainingCards() {
+        var min = -1;
+        var len;
         for (var key in this.playerDecks) {
-            count += this.playerDecks[key].length;
-            decks++;
+            len = this.playerDecks[key].length;
+            if (min === -1 || min > len) {
+                min = len;
+            }
         }
-        var x = Math.round(count / decks);
-        return x;
+        return min;
     }
 
     isDuplicateFiveCardHands(avaCombs, targetComb) {
@@ -539,7 +540,7 @@ class BigTwoGame extends Game {
             var i;
             var j;
             var combs;
-            var avgCards = this.getAverageRemainingCards();
+            var avgCards = this.getMinimumRemainingCards();
             for (i = Sizes.ALL_COMBINATIONS.length - 1; i >= 0; i--) {
                 combs = avaCombs[Sizes.ALL_COMBINATIONS[i]];
 
@@ -589,7 +590,7 @@ class BigTwoGame extends Game {
             }
 
             if (selectedCard) {
-                var avgCards = this.getAverageRemainingCards();
+                var avgCards = this.getMinimumRemainingCards();
                 if ((avgCards > LAST_CARD_LIMIT &&
                      this.containsLastCard(deck, [selectedCard])) ||
                     (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
@@ -623,7 +624,7 @@ class BigTwoGame extends Game {
             var selectedMatch = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
             if (selectedMatch) {
-                var avgCards = this.getAverageRemainingCards();
+                var avgCards = this.getMinimumRemainingCards();
                 if ((avgCards > LAST_CARD_LIMIT &&
                     this.containsLastCard(deck, selectedMatch)) ||
                     (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
@@ -648,7 +649,7 @@ class BigTwoGame extends Game {
             var i;
             var selectedMatch;
             var matches;
-            var avgCards = this.getAverageRemainingCards();
+            var avgCards = this.getMinimumRemainingCards();
             for (i = startIndex; i < Sizes.FIVE_CARD_HANDS.length; i++) {
                 matches = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
 
