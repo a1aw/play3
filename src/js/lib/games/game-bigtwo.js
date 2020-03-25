@@ -8,7 +8,8 @@ var makeCombination = require("./bigtwo/makeCombination");
 const PLAYER_TIMER = 20000;
 
 const LAST_CARD_LIMIT = 7;
-const LAST_FIVE_CARD_HANDS_LIMIT = 8;
+const SEPARATE_NORMAL_HANDS_LIMIT = 6;
+const SEPARATE_FIVE_CARD_HANDS_LIMIT = 8;
 
 class BigTwoGame extends Game {
 
@@ -443,7 +444,7 @@ class BigTwoGame extends Game {
         return min;
     }
 
-    isDuplicateFiveCardHands(deck, avaCombs, targetComb) {
+    isDuplicateOtherHands(avaCombs, targetComb) {
         var i;
         var j;
         var x;
@@ -455,14 +456,28 @@ class BigTwoGame extends Game {
         for (i = 0; i < targetComb.length; i++) {
             indexes.push(targetComb[i].index);
         }
+
+        var currMin = this.getMinimumRemainingCards();
         
         var hasNoDupComb;
         var dup;
-        for (i = Sizes.FIVE_CARD_HANDS.length - 1; i >= 0; i--) {
-            combs = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
+        var key;
+        for (i = Sizes.ALL_COMBINATIONS.length - 1; i >= 0; i--) {
+            key = Sizes.ALL_COMBINATIONS[i];
+            combs = avaCombs[key];
 
-            if (Sizes.FIVE_CARD_HANDS[i] === "flush") {
+            if (key === "flush") {
                 //TODO: Skip handling by now
+                continue;
+            }
+
+            if (Sizes.FIVE_CARD_HANDS.includes(key) &&
+                currMin <= SEPARATE_FIVE_CARD_HANDS_LIMIT) {
+                continue;
+            }
+
+            if (Sizes.COMBINATIONS.includes(key) &&
+                currMin <= SEPARATE_NORMAL_HANDS_LIMIT) {
                 continue;
             }
 
@@ -473,11 +488,6 @@ class BigTwoGame extends Game {
 
                     dup = false;
                     for (x = 0; x < comb.length; x++) {
-                        if (this.getMinimumRemainingCards() > LAST_CARD_LIMIT &&
-                            this.containsLastCard(deck, comb)) {
-                            continue;
-                        }
-
                         if (indexes.includes(comb[x].index)) {
                             dup = true;
                             break;
@@ -551,7 +561,7 @@ class BigTwoGame extends Game {
             var i;
             var j;
             var combs;
-            var avgCards = this.getMinimumRemainingCards();
+            var minCards = this.getMinimumRemainingCards();
             for (i = Sizes.ALL_COMBINATIONS.length - 1; i >= 0; i--) {
                 combs = avaCombs[Sizes.ALL_COMBINATIONS[i]];
 
@@ -560,11 +570,10 @@ class BigTwoGame extends Game {
                 }
 
                 for (j = 0; j < combs.length; j++) {
-                    if (avgCards > LAST_CARD_LIMIT &&
+                    if (minCards > LAST_CARD_LIMIT &&
                         this.containsLastCard(deck, combs[j])) {
                         continue;
-                    } else if (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                        this.isDuplicateFiveCardHands(deck, avaCombs, combs[j])) {
+                    } else if (this.isDuplicateOtherHands(avaCombs, combs[j])) {
                         continue;
                     } else {
                         return {
@@ -601,11 +610,10 @@ class BigTwoGame extends Game {
             }
 
             if (selectedCard) {
-                var avgCards = this.getMinimumRemainingCards();
-                if ((avgCards > LAST_CARD_LIMIT &&
+                var minCards = this.getMinimumRemainingCards();
+                if ((minCards > LAST_CARD_LIMIT &&
                      this.containsLastCard(deck, [selectedCard])) ||
-                    (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                        this.isDuplicateFiveCardHands(deck, avaCombs, [selectedCard]))
+                    this.isDuplicateOtherHands(avaCombs, [selectedCard]))
                 ) {
                     return {
                         event: "pass"
@@ -635,11 +643,10 @@ class BigTwoGame extends Game {
             var selectedMatch = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
             if (selectedMatch) {
-                var avgCards = this.getMinimumRemainingCards();
-                if ((avgCards > LAST_CARD_LIMIT &&
+                var minCards = this.getMinimumRemainingCards();
+                if ((minCards > LAST_CARD_LIMIT &&
                     this.containsLastCard(deck, selectedMatch)) ||
-                    (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                        this.isDuplicateFiveCardHands(deck, avaCombs, selectedMatch))
+                    this.isDuplicateOtherHands(avaCombs, selectedMatch)
                 ) {
                     return {
                         event: "pass"
@@ -660,7 +667,7 @@ class BigTwoGame extends Game {
             var i;
             var selectedMatch;
             var matches;
-            var avgCards = this.getMinimumRemainingCards();
+            var minCards = this.getMinimumRemainingCards();
             for (i = startIndex; i < Sizes.FIVE_CARD_HANDS.length; i++) {
                 matches = avaCombs[Sizes.FIVE_CARD_HANDS[i]];
 
@@ -673,10 +680,9 @@ class BigTwoGame extends Game {
                 selectedMatch = this.findMatchLargerThanCombination(matches, this.lastCombination);
 
                 if (selectedMatch) {
-                    if ((avgCards > LAST_CARD_LIMIT &&
+                    if ((minCards > LAST_CARD_LIMIT &&
                         this.containsLastCard(deck, selectedMatch)) ||
-                        (avgCards > LAST_FIVE_CARD_HANDS_LIMIT &&
-                            this.isDuplicateFiveCardHands(deck, avaCombs, selectedMatch))
+                        this.isDuplicateOtherHands(avaCombs, selectedMatch)
                     ) {
                         return {
                             event: "pass"
