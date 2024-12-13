@@ -1,0 +1,7 @@
+services:
+  play3-server:
+    build:
+      context: .
+    entrypoint: ["node", "./src/js/lib/server.js"]
+    environment:
+      NODE_ENV: production

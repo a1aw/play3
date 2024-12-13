@@ -15,7 +15,7 @@ server.listen(7692, () => {
 var parties = {};
 
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "https://www.playplayplay.ml");
+    res.header("Access-Control-Allow-Origin", "https://play3.anth.cloud");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
@@ -137,7 +137,7 @@ io.on('connection', function (socket) {
                 partyId = getRandomPartyId();
             } while (parties[partyId])
             console.log("New party: " + partyId);
-            
+
             var player = new Player(getRandomMixedLetters(24), data.playerName, getRandomMixedLetters(64), socket);
 
             var party = new Party(partyId, () => {

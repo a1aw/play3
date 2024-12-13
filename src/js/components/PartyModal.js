@@ -80,7 +80,7 @@ export default function (props) {
             };
         }
     }
-    
+
     return (
         <Modal show={props.show} animation={false} backdrop="static">
             <Modal.Header>
@@ -95,7 +95,7 @@ export default function (props) {
                         <InputGroup className="mb-2">
                             <FormControl
                                 id="share-link"
-                                value={"https://playplayplay.ml/?" + props.party.partyId}
+                                value={"https://play3.anth.cloud/?" + props.party.partyId}
                                 readOnly
                             />
                             <InputGroup.Append>

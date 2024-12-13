@@ -1,4 +1,4 @@
-﻿    // JavaScript source code
+﻿// JavaScript source code
 import React from 'react';
 import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
@@ -21,7 +21,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        var endPoint = "https://0.playplayplay.ml";
+        var endPoint = "https://play3-srv.anth.cloud";
 
         var savedEndPoint = localStorage.getItem("endpoint");
         if (localStorage && savedEndPoint) {
@@ -181,7 +181,7 @@ class App extends React.Component {
         }
 
         this.client.joinParty(nickName, partyId);
-        
+
         this.setState({
             gameModalShow: false,
             joiningPartyModalShow: true,
@@ -203,7 +203,7 @@ class App extends React.Component {
         }
 
         this.client.createParty(nickName, gameId);
-        
+
         this.setState({
             gameModalShow: false,
             joiningPartyModalShow: true,
